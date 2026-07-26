@@ -1,11 +1,11 @@
 export const navLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'Disasters', href: '#latest-headlines' },
-  { label: 'Map', href: '#who-we-are' },
-  { label: 'Volunteer', href: '#get-involved' },
-  { label: 'Relief', href: '#how-it-works' },
-  { label: 'News', href: '#news-featured-stories' },
-  { label: 'About', href: '#who-we-are' },
+  { label: 'Home', href: '/' },
+  { label: 'Disasters', href: '/incidents' },
+  { label: 'Map', href: '/#who-we-are' },
+  { label: 'Volunteer', href: '/#get-involved' },
+  { label: 'Relief', href: '/#how-it-works' },
+  { label: 'News', href: '/#news-featured-stories' },
+  { label: 'About', href: '/#who-we-are' },
 ];
 
 export const heroStats = [
