@@ -10,6 +10,7 @@ import DoctorDashboardPage from '../pages/DoctorDashboardPage';
 import IncidentListPage from '../pages/IncidentListPage';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
+import MapPage from '../pages/MapPage';
 import NgoDashboardPage from '../pages/NgoDashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import RegisterPage from '../pages/RegisterPage';
@@ -21,6 +22,7 @@ export default function AppRouter() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/incidents" element={<IncidentListPage />} />
+        <Route path="/map" element={<MapPage />} />
         <Route
           path="/login"
           element={
