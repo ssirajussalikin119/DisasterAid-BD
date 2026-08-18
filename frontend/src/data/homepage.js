@@ -1,7 +1,7 @@
 export const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Disasters', href: '/incidents' },
-  { label: 'Map', href: '/#who-we-are' },
+  { label: 'Map', href: '/map' },
   { label: 'Volunteer', href: '/#get-involved' },
   { label: 'Relief', href: '/#how-it-works' },
   { label: 'News', href: '/#news-featured-stories' },

@@ -28,3 +28,79 @@ button,
 a {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Interactive incident map */
+.leaflet-container {
+  background: #e0f2fe;
+  font-family: inherit;
+}
+
+.leaflet-control-zoom a {
+  color: #0f172a;
+}
+
+.leaflet-control-attribution {
+  font-size: 10px;
+}
+
+.incident-marker-wrapper,
+.incident-cluster-wrapper {
+  border: 0;
+  background: transparent;
+}
+
+.incident-marker {
+  position: relative;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 3px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  background: var(--marker-color);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.28);
+  transform: rotate(-45deg);
+}
+
+.incident-marker-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: #fff;
+}
+
+.incident-cluster {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 4px solid rgba(255, 255, 255, 0.92);
+  border-radius: 9999px;
+  background: var(--cluster-color);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.35),
+    0 8px 22px rgba(15, 23, 42, 0.24);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.18);
+}
+
+.leaflet-popup-content {
+  margin: 16px;
+}
+
+.leaflet-popup-tip {
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .leaflet-control-zoom {
+    margin-right: 12px !important;
+    margin-bottom: 24px !important;
+  }
+}

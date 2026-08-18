@@ -13,7 +13,7 @@ export default function AppLayout() {
     navigate('/login', { replace: true });
   };
 
-  if (location.pathname === '/') {
+  if (location.pathname === '/' || location.pathname === '/map') {
     return <Outlet />;
   }
 

@@ -1,87 +1,17 @@
 import { useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import Container from '../components/common/Container';
+import { incidentSeedData } from '../data/incidents';
 
-const incidents = [
-  {
-    id: 1,
-    title: 'Severe Flooding in Sylhet',
-    location: 'Sylhet Sadar, Sylhet',
-    type: 'Flood',
-    severity: 'Critical',
-    status: 'Verified',
-    reportedAt: '26 July 2026, 5:30 AM',
-    peopleAffected: 420,
-    description:
-      'Several neighbourhoods are under water. Emergency food, clean water and temporary shelter are urgently required.',
-  },
-  {
-    id: 2,
-    title: 'River Erosion in Kurigram',
-    location: 'Chilmari, Kurigram',
-    type: 'River Erosion',
-    severity: 'High',
-    status: 'Pending',
-    reportedAt: '26 July 2026, 4:15 AM',
-    peopleAffected: 185,
-    description:
-      'Multiple families have been displaced after rapid river erosion damaged homes near the riverbank.',
-  },
-  {
-    id: 3,
-    title: 'Fire Incident at Local Market',
-    location: 'Kotwali, Chattogram',
-    type: 'Fire',
-    severity: 'High',
-    status: 'Responding',
-    reportedAt: '25 July 2026, 11:40 PM',
-    peopleAffected: 76,
-    description:
-      'A large fire affected several shops. Fire service teams are working at the scene and medical support is needed.',
-  },
-  {
-    id: 4,
-    title: 'Cyclone Shelter Support Needed',
-    location: 'Kalapara, Patuakhali',
-    type: 'Cyclone',
-    severity: 'Medium',
-    status: 'Verified',
-    reportedAt: '25 July 2026, 8:20 PM',
-    peopleAffected: 260,
-    description:
-      'Residents are moving to nearby shelters. Additional dry food, medicine and volunteer support are requested.',
-  },
-  {
-    id: 5,
-    title: 'Landslide Risk After Heavy Rain',
-    location: 'Rangamati Sadar, Rangamati',
-    type: 'Landslide',
-    severity: 'Critical',
-    status: 'Pending',
-    reportedAt: '25 July 2026, 6:10 PM',
-    peopleAffected: 132,
-    description:
-      'Continuous rainfall has increased landslide risk in several hillside communities. Evacuation support may be required.',
-  },
-  {
-    id: 6,
-    title: 'Heatwave Medical Assistance',
-    location: 'Rajshahi City, Rajshahi',
-    type: 'Heatwave',
-    severity: 'Medium',
-    status: 'Resolved',
-    reportedAt: '24 July 2026, 2:45 PM',
-    peopleAffected: 94,
-    description:
-      'Temporary medical booths and drinking-water stations were arranged for vulnerable residents.',
-  },
-];
+const incidents = incidentSeedData;
 
 const severityStyles = {
   Critical: 'bg-red-50 text-red-700 ring-red-200',
   High: 'bg-orange-50 text-orange-700 ring-orange-200',
   Medium: 'bg-amber-50 text-amber-700 ring-amber-200',
+  Low: 'bg-green-50 text-green-700 ring-green-200',
 };
 
 const statusStyles = {
@@ -102,6 +32,8 @@ function Badge({ children, className }) {
 }
 
 export default function IncidentListPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedIncidentId = searchParams.get('incident');
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -111,6 +43,8 @@ export default function IncidentListPage() {
 
   const filteredIncidents = useMemo(() => {
     return incidents.filter((incident) => {
+      if (selectedIncidentId && String(incident.id) !== selectedIncidentId) return false;
+
       const searchValue = searchTerm.toLowerCase();
 
       const matchesSearch =
@@ -126,7 +60,7 @@ export default function IncidentListPage() {
 
       return matchesSearch && matchesType && matchesStatus;
     });
-  }, [searchTerm, typeFilter, statusFilter]);
+  }, [searchTerm, typeFilter, statusFilter, selectedIncidentId]);
 
   const criticalCount = incidents.filter(
     (incident) => incident.severity === 'Critical',
@@ -286,7 +220,7 @@ export default function IncidentListPage() {
                 </p>
               </div>
 
-              {(searchTerm ||
+              {(selectedIncidentId || searchTerm ||
                 typeFilter !== 'All' ||
                 statusFilter !== 'All') && (
                 <button
@@ -295,10 +229,11 @@ export default function IncidentListPage() {
                     setSearchTerm('');
                     setTypeFilter('All');
                     setStatusFilter('All');
+                    if (selectedIncidentId) setSearchParams({}, { replace: true });
                   }}
                   className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate transition hover:border-slate-300 hover:text-ink"
                 >
-                  Clear filters
+                  {selectedIncidentId ? 'Back to all incidents' : 'Clear filters'}
                 </button>
               )}
             </div>
@@ -369,19 +304,19 @@ export default function IncidentListPage() {
                     </div>
 
                     <div className="mt-6 flex flex-wrap gap-3">
-                      <button
-                        type="button"
+                      <Link
+                        to={`/incidents?incident=${encodeURIComponent(incident.id)}`}
                         className="rounded-xl bg-sea px-5 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(14,165,233,0.22)] transition hover:bg-sky-600"
                       >
                         View details
-                      </button>
+                      </Link>
 
-                      <button
-                        type="button"
+                      <Link
+                        to={`/map?incident=${encodeURIComponent(incident.id)}`}
                         className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-ink transition hover:border-slate-300 hover:bg-mist"
                       >
                         View location
-                      </button>
+                      </Link>
                     </div>
                   </article>
                 ))}
