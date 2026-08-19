@@ -1,5 +1,5 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
-import { fetchCurrentUser, loginUser, logoutUser, registerUser, updateProfileUser } from '../services/authService';
+import { fetchCurrentUser, logoutUser, sendOtp, updateProfileUser, verifyOtp } from '../services/authService';
 
 export const AuthContext = createContext(null);
 
@@ -46,30 +46,28 @@ export function AuthProvider({ children }) {
     bootstrapping,
     busy,
     error,
-    login: async (payload) => {
+    sendOtp: async (phone) => {
       setBusy(true);
       setError(null);
       try {
-        const response = await loginUser(payload);
-        setUser(response.data.user);
-        return { data: response.data };
+        return await sendOtp(phone);
       } catch (exception) {
-        setUser(null);
-        setError(exception?.response?.data?.message ?? 'Authentication failed.');
+        setError(exception?.response?.data?.message ?? 'Unable to send an OTP.');
         throw exception;
       } finally {
         setBusy(false);
       }
     },
-    register: async (payload) => {
+    verifyOtp: async (payload) => {
       setBusy(true);
       setError(null);
       try {
-        const response = await registerUser(payload);
-        setUser(response.data.user);
-        return { data: response.data };
+        const response = await verifyOtp(payload);
+        setUser(response.user);
+        return response;
       } catch (exception) {
-        setError(exception?.response?.data?.message ?? 'Registration failed.');
+        setUser(null);
+        setError(exception?.response?.data?.message ?? 'The OTP could not be verified.');
         throw exception;
       } finally {
         setBusy(false);
@@ -77,10 +75,10 @@ export function AuthProvider({ children }) {
     },
     logout: async () => {
       setBusy(true);
+      setUser(null);
       try {
         await logoutUser();
       } finally {
-        setUser(null);
         setBusy(false);
       }
     },

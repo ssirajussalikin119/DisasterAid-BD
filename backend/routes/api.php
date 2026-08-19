@@ -3,20 +3,25 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OtpAuthController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RoleApplicationController;
 use App\Http\Middleware\AuthenticateJwt;
-use App\Http\Middleware\EnsureGuestJwt;
 use App\Http\Middleware\EnsureRole;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('throttle:auth-register')->group(function (): void {
-    Route::post('/register', [AuthController::class, 'register'])->middleware(EnsureGuestJwt::class);
+Route::prefix('auth')->group(function (): void {
+    Route::post('/send-otp', [OtpAuthController::class, 'sendOtp'])->middleware('throttle:otp-send');
+    Route::post('/verify-otp', [OtpAuthController::class, 'verifyOtp'])->middleware('throttle:otp-verify');
 });
-
-Route::middleware('throttle:auth-login')->group(function (): void {
-    Route::post('/login', [AuthController::class, 'login'])->middleware(EnsureGuestJwt::class);
+Route::get('/reports', [ReportController::class, 'index']);
+Route::get('/reports/{id}', [ReportController::class, 'show']);
+Route::middleware([AuthenticateJwt::class])->group(function (): void {
+    Route::post('/reports', [ReportController::class, 'store']);
+    Route::put('/reports/{id}', [ReportController::class, 'update']);
+    Route::patch('/reports/{id}', [ReportController::class, 'update']);
+    Route::delete('/reports/{id}', [ReportController::class, 'destroy']);
 });
-
 Route::middleware([AuthenticateJwt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
@@ -32,3 +37,4 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
         Route::patch('/role-applications/{roleApplication}', [RoleApplicationController::class, 'review']);
     });
 });
+

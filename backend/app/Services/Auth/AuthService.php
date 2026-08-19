@@ -7,47 +7,31 @@ namespace App\Services\Auth;
 use App\Enums\Role;
 use App\Models\User;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class AuthService
 {
     public const COOKIE_NAME = 'disasteraid_token';
 
-    public function register(array $data): array
+    public function loginOrRegister(string $phone): array
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'password' => Hash::make($data['password']),
-            'role' => Role::Citizen->value,
-            'role_status' => 'active',
-        ]);
+        $user = User::query()->firstOrCreate(
+            ['phone' => $phone],
+            [
+                'name' => 'Citizen '.substr($phone, -4),
+                'email' => null,
+                'password' => null,
+                'role' => Role::Citizen->value,
+                'role_status' => 'active',
+                'phone_verified_at' => now(),
+            ]
+        );
+
+        if ($user->phone_verified_at === null) {
+            $user->forceFill(['phone_verified_at' => now()])->save();
+        }
 
         $token = auth('api')->login($user);
-
-        return $this->buildPayload($user, $token);
-    }
-
-    public function login(array $data): array
-    {
-        $credentials = [
-            'email' => $data['email'],
-            'password' => $data['password'],
-        ];
-
-        $token = auth('api')->attempt($credentials);
-
-        if (! $token) {
-            throw new UnauthorizedHttpException('', 'Invalid email or password.');
-        }
-
-        $user = auth('api')->user();
-
-        if (! $user instanceof User) {
-            throw new UnauthorizedHttpException('', 'Invalid email or password.');
-        }
 
         return $this->buildPayload($user, $token);
     }
