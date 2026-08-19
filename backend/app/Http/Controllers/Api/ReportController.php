@@ -77,6 +77,7 @@ class ReportController extends Controller
             'location' => 'required|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
+            'incident_id' => 'nullable|integer|exists:incidents,id',
             'status' => 'nullable|string|max:255',
             'severity' => 'nullable|string|max:255',
         ];
