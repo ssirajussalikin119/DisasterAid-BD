@@ -3,7 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Logo from '../components/layout/Logo';
 import IncidentMap from '../components/map/IncidentMap';
 import MapSidebar from '../components/map/MapSidebar';
-import { incidentSeedData } from '../data/incidents';
 import { getMapIncidents } from '../services/incidentService';
 
 const toCountList = (items, key) => {
@@ -62,22 +61,17 @@ export default function MapPage() {
         const liveIncidents = await getMapIncidents();
         if (!active) return;
 
-        const rows = liveIncidents.length > 0 ? liveIncidents : incidentSeedData;
-        setIncidents(rows);
-        setApiWarning(
-          liveIncidents.length > 0
-            ? ''
-            : 'The incident API returned no mappable records, so demo reports are shown.',
-        );
-        setSelectedCategories(new Set(rows.map((incident) => incident.type)));
-        setSelectedSources(new Set(rows.map((incident) => incident.source)));
+        setIncidents(liveIncidents);
+        setApiWarning(liveIncidents.length > 0 ? '' : 'No live reports with map coordinates are available yet.');
+        setSelectedCategories(new Set(liveIncidents.map((incident) => incident.type)));
+        setSelectedSources(new Set(liveIncidents.map((incident) => incident.source)));
       } catch {
         if (!active) return;
 
-        setIncidents(incidentSeedData);
-        setSelectedCategories(new Set(incidentSeedData.map((incident) => incident.type)));
-        setSelectedSources(new Set(incidentSeedData.map((incident) => incident.source)));
-        setApiWarning('Live incident data is unavailable. Showing demo reports until the API is reachable.');
+        setIncidents([]);
+        setSelectedCategories(new Set());
+        setSelectedSources(new Set());
+        setApiWarning('Live report data is unavailable. Check that the backend is running.');
       } finally {
         if (active) setLoading(false);
       }

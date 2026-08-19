@@ -1,10 +1,19 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import Container from '../common/Container';
 import { navLinks } from '../../data/homepage';
 import PrimaryButton from '../ui/PrimaryButton';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function Navbar() {
+  const { user, isAuthenticated, bootstrapping, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login', { replace: true });
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/70 bg-white/75 backdrop-blur-xl">
       <Container className="py-4">
@@ -20,11 +29,24 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="flex flex-wrap items-center gap-3">
-            <PrimaryButton href="#get-involved" className="bg-[#fbbf24] text-ink shadow-[0_14px_30px_rgba(251,191,36,0.22)] hover:bg-amber-300">
+            <PrimaryButton
+              to={isAuthenticated ? '/incidents/new' : '/login'}
+              state={isAuthenticated ? undefined : { from: '/incidents/new' }}
+              className="bg-[#fbbf24] text-ink shadow-[0_14px_30px_rgba(251,191,36,0.22)] hover:bg-amber-300"
+            >
               Emergency Report
             </PrimaryButton>
-            <Link to="/login" className="text-sm font-semibold text-slate-700 transition hover:text-ink">Login</Link>
-            <Link to="/register" className="text-sm font-semibold text-slate-700 transition hover:text-ink">Register</Link>
+            {!bootstrapping && user ? (
+              <>
+                <Link to="/account" className="text-sm font-semibold text-slate-700 transition hover:text-ink">{user.name}</Link>
+                <button type="button" onClick={handleLogout} className="text-sm font-semibold text-slate-700 transition hover:text-ink">Logout</button>
+              </>
+            ) : !bootstrapping ? (
+              <>
+                <Link to="/login" className="text-sm font-semibold text-slate-700 transition hover:text-ink">Login</Link>
+                <Link to="/register" className="text-sm font-semibold text-slate-700 transition hover:text-ink">Register</Link>
+              </>
+            ) : null}
           </div>
         </div>
       </Container>

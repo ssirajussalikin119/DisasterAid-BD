@@ -6,14 +6,14 @@ import AdminDashboardPage from '../pages/AdminDashboardPage';
 import AccountPage from '../pages/AccountPage';
 import ApplyNgoPage from '../pages/ApplyNgoPage';
 import ApplyVolunteerPage from '../pages/ApplyVolunteerPage';
+import CreateReportPage from '../pages/CreateReportPage';
 import DoctorDashboardPage from '../pages/DoctorDashboardPage';
 import IncidentListPage from '../pages/IncidentListPage';
 import HomePage from '../pages/HomePage';
-import LoginPage from '../pages/LoginPage';
+import OtpPage from '../pages/OtpPage';
 import MapPage from '../pages/MapPage';
 import NgoDashboardPage from '../pages/NgoDashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
-import RegisterPage from '../pages/RegisterPage';
 import VolunteerDashboardPage from '../pages/VolunteerDashboardPage';
 
 export default function AppRouter() {
@@ -24,10 +24,18 @@ export default function AppRouter() {
         <Route path="/incidents" element={<IncidentListPage />} />
         <Route path="/map" element={<MapPage />} />
         <Route
+          path="/incidents/new"
+          element={
+            <ProtectedRoute>
+              <CreateReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/login"
           element={
             <GuestRoute>
-              <LoginPage />
+              <OtpPage />
             </GuestRoute>
           }
         />
@@ -35,7 +43,7 @@ export default function AppRouter() {
           path="/register"
           element={
             <GuestRoute>
-              <RegisterPage />
+              <OtpPage />
             </GuestRoute>
           }
         />

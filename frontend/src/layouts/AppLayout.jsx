@@ -13,7 +13,14 @@ export default function AppLayout() {
     navigate('/login', { replace: true });
   };
 
-  if (location.pathname === '/' || location.pathname === '/map') {
+  if (
+    location.pathname === '/' ||
+    location.pathname === '/map' ||
+    location.pathname === '/incidents' ||
+    location.pathname === '/incidents/new' ||
+    location.pathname === '/login' ||
+    location.pathname === '/register'
+  ) {
     return <Outlet />;
   }
 

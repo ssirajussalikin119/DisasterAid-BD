@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Logo from '../components/layout/Logo';
+import Navbar from '../components/layout/Navbar';
 
 const highlights = [
   ['01', 'Report an incident', 'Submit geotagged reports with photos during floods, cyclones, or heatwaves.'],
@@ -9,16 +10,16 @@ const highlights = [
 
 export default function AuthLayout({ title, subtitle, children }) {
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f8fafc] px-4 py-4 text-ink sm:px-6 sm:py-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl items-center lg:min-h-[calc(100vh-3rem)]">
+    <div className="min-h-screen overflow-hidden bg-[#f8fafc] text-ink">
+      <Navbar />
+      <div className="px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+        <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-7xl items-center lg:min-h-[calc(100vh-9rem)]">
         <div className="grid w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-panel lg:grid-cols-[1.08fr_0.92fr]">
           <aside className="relative hidden min-h-[680px] overflow-hidden bg-ink p-10 text-white lg:flex lg:flex-col">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(251,191,36,0.26),transparent_28%),radial-gradient(circle_at_83%_78%,rgba(14,165,233,0.28),transparent_30%)]" />
             <div className="absolute -right-24 top-36 h-72 w-72 rounded-full border border-white/10" />
             <div className="absolute -left-16 bottom-[-3.5rem] h-64 w-64 rounded-full border-[20px] border-amber-400/20" />
             <div className="relative my-auto max-w-xl py-12">
-              <Link to="/" className="mb-6 inline-block"><Logo dark large /></Link>
-              <span className="mb-5 block h-14 w-1.5 rounded-full bg-[#fbbf24]" aria-hidden="true" />
               <h1 className="font-display text-5xl font-bold leading-[1.05] tracking-tight">We help people survive, recover and rebuild.</h1>
               <p className="mt-6 max-w-lg text-lg leading-8 text-slate-300">A trusted digital response platform for communities across Bangladesh.</p>
             </div>
@@ -42,6 +43,7 @@ export default function AuthLayout({ title, subtitle, children }) {
               {children}
             </div>
           </main>
+        </div>
         </div>
       </div>
     </div>
