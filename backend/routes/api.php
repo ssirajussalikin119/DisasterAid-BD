@@ -1,7 +1,8 @@
 <?php
 
 declare(strict_types=1);
-
+use App\Http\Controllers\Api\ReliefCenterController;
+use App\Http\Controllers\Api\ReliefDistributionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\IncidentController;
@@ -48,4 +49,5 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
         Route::patch('/role-applications/{roleApplication}', [RoleApplicationController::class, 'review']);
     });
 });
-
+Route::apiResource('relief-centers', ReliefCenterController::class);
+Route::apiResource('relief-distributions', ReliefDistributionController::class);
