@@ -1,5 +1,7 @@
-﻿backend/vendor/
-node_modules/
+﻿/vendor/
+/node_modules/
+client/node_modules/
 .env
-backend/.env
-backend/storage/logs/*
+client/.env
+client/.env.local
+project.zip
