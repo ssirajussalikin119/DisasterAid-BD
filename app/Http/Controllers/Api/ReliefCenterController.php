@@ -27,6 +27,9 @@ class ReliefCenterController extends Controller
             'capacity' => 'nullable|integer|min:0',
             'contact_number' => 'nullable|string|max:50',
             'status' => 'nullable|string|max:50',
+             'latitude' => 'nullable|numeric',
+    'longitude' => 'nullable|numeric',
+    'available_resources' => 'nullable|string',
         ]);
 
         return response()->json([
@@ -49,6 +52,9 @@ class ReliefCenterController extends Controller
             'capacity' => 'nullable|integer|min:0',
             'contact_number' => 'nullable|string|max:50',
             'status' => 'nullable|string|max:50',
+            'latitude' => 'nullable|numeric',
+'longitude' => 'nullable|numeric',
+'available_resources' => 'nullable|string',
         ]);
 
         return response()->json([

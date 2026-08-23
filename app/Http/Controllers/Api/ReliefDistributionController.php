@@ -27,6 +27,10 @@ class ReliefDistributionController extends Controller
             'quantity' => 'required|integer|min:1',
             'distribution_date' => 'required|date',
             'description' => 'nullable|string',
+            'recipient' => 'nullable|string|max:255',
+'report_reference' => 'nullable|string|max:255',
+'distributed_by' => 'nullable|integer',
+'distributed_at' => 'nullable|date',
         ]);
 
         return response()->json([
@@ -49,6 +53,10 @@ class ReliefDistributionController extends Controller
             'quantity' => 'sometimes|required|integer|min:1',
             'distribution_date' => 'sometimes|required|date',
             'description' => 'nullable|string',
+            'recipient' => 'nullable|string|max:255',
+'report_reference' => 'nullable|string|max:255',
+'distributed_by' => 'nullable|integer',
+'distributed_at' => 'nullable|date',
         ]);
 
         return response()->json([

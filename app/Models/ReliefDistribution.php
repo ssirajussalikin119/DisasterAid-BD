@@ -12,6 +12,15 @@ class ReliefDistribution extends Model
         'quantity',
         'distribution_date',
         'description',
+        'recipient',
+        'report_reference',
+        'distributed_by',
+        'distributed_at',
+    ];
+
+    protected $casts = [
+        'distribution_date' => 'date',
+        'distributed_at' => 'datetime',
     ];
 
     public function reliefCenter()
