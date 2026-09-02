@@ -19,7 +19,8 @@ export default function AppLayout() {
     location.pathname === '/incidents' ||
     location.pathname === '/incidents/new' ||
     location.pathname === '/login' ||
-    location.pathname === '/register'
+    location.pathname === '/register' ||
+    location.pathname.startsWith('/admin')
   ) {
     return <Outlet />;
   }

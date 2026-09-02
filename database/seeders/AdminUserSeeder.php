@@ -17,7 +17,7 @@ class AdminUserSeeder extends Seeder
             ['email' => env('ADMIN_EMAIL', 'admin@disasteraidbd.local')],
             [
                 'name' => env('ADMIN_NAME', 'System Admin'),
-                'phone' => env('ADMIN_PHONE', '+8801000000000'),
+                'phone' => env('ADMIN_PHONE', '+8801700000000'),
                 'password' => Hash::make(env('ADMIN_PASSWORD', 'ChangeMe123!')),
                 'role' => Role::Admin->value,
                 'role_status' => 'active',
