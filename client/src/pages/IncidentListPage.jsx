@@ -108,7 +108,12 @@ export default function IncidentListPage() {
           <Container>
             <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
               <div className="max-w-3xl"><p className="mb-5 font-display text-lg font-bold text-ink">Active Reports</p><h1 className="font-display text-4xl font-bold tracking-tight text-ink sm:text-5xl">Verified disaster reports across Bangladesh.</h1><p className="mt-5 text-lg leading-9 text-slate-700">Browse community reports, understand current response needs, and help make urgent situations visible.</p></div>
-              <PrimaryButton to="/incidents/new">Report an incident</PrimaryButton>
+              <div className="flex flex-wrap gap-3">
+                <PrimaryButton to="/incidents/new">Report an incident</PrimaryButton>
+                <SecondaryButton to="/report-incident-relations" className="border-slate-300 bg-white text-ink hover:bg-slate-50">
+                  SQL Relational Matrix
+                </SecondaryButton>
+              </div>
             </div>
             <div className="mt-12 grid gap-5 sm:grid-cols-3"><StatCard value={incidents.length} label="Total reports" /><StatCard value={criticalCount} label="Critical reports" /><StatCard value={resolvedCount} label="Resolved reports" /></div>
           </Container>

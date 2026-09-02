@@ -77,5 +77,98 @@ class DisasterOperationsSeeder extends Seeder
                 ['assigned_by' => $admin->id, 'accepted' => $accepted, 'status' => $status]
             );
         }
+
+        $citizenUsers = [
+            ['name' => 'Tanvir Ahmed', 'phone' => '+8801811223344', 'email' => 'tanvir.citizen@disasteraidbd.local'],
+            ['name' => 'Farhana Islam', 'phone' => '+8801911223344', 'email' => 'farhana.citizen@disasteraidbd.local'],
+            ['name' => 'Kawsar Mahmud', 'phone' => '+8801611223344', 'email' => 'kawsar.citizen@disasteraidbd.local'],
+        ];
+
+        $citizens = collect($citizenUsers)->map(function (array $attributes): User {
+            return User::updateOrCreate(
+                ['phone' => $attributes['phone']],
+                [
+                    'name' => $attributes['name'],
+                    'email' => $attributes['email'],
+                    'password' => Hash::make('Password1!'),
+                    'role' => Role::Citizen->value,
+                    'role_status' => 'active',
+                    'phone_verified_at' => now(),
+                ]
+            );
+        });
+
+        // 1. Reports linked to Incident 0 (Sylhet Flood)
+        \App\Models\Report::updateOrCreate(
+            ['title' => 'Severe Waterlogging in Kazirbazar'],
+            [
+                'user_id' => $citizens[0]->id,
+                'incident_id' => $incidents[0]->id,
+                'description' => 'Water level reached 4 feet. Over 50 families trapped on rooftops needing immediate dry food and clean water.',
+                'location' => 'Kazirbazar, Sylhet Sadar',
+                'latitude' => 24.8890,
+                'longitude' => 91.8650,
+                'status' => 'verified',
+                'severity' => 'high',
+            ]
+        );
+
+        \App\Models\Report::updateOrCreate(
+            ['title' => 'Embankment Breach at Companyganj'],
+            [
+                'user_id' => $citizens[1]->id,
+                'incident_id' => $incidents[0]->id,
+                'description' => 'River embankment washed away during midnight surge. Agricultural fields submerged.',
+                'location' => 'Companyganj, Sylhet',
+                'latitude' => 25.0452,
+                'longitude' => 91.7584,
+                'status' => 'in_progress',
+                'severity' => 'critical',
+            ]
+        );
+
+        // 2. Report linked to Incident 1 (Cox\'s Bazar Cyclone)
+        \App\Models\Report::updateOrCreate(
+            ['title' => 'Fishermen Trapped Near Kutubdia Channel'],
+            [
+                'user_id' => $citizens[2]->id,
+                'incident_id' => $incidents[1]->id,
+                'description' => 'Two fishing boats unable to return to shore due to severe cyclone gusts. Emergency coast guard rescue required.',
+                'location' => 'Kutubdia, Cox\'s Bazar',
+                'latitude' => 21.8167,
+                'longitude' => 91.8500,
+                'status' => 'verified',
+                'severity' => 'critical',
+            ]
+        );
+
+        // 3. Unlinked / Standalone Reports (incident_id = null)
+        \App\Models\Report::updateOrCreate(
+            ['title' => 'Flash Flooding in Sunamganj Haor Area'],
+            [
+                'user_id' => $citizens[0]->id,
+                'incident_id' => null,
+                'description' => 'Sudden surge from upstream rivers causing flash flood in Tahirpur upazila. Boat transport needed.',
+                'location' => 'Tahirpur, Sunamganj',
+                'latitude' => 25.1000,
+                'longitude' => 91.1700,
+                'status' => 'pending',
+                'severity' => 'medium',
+            ]
+        );
+
+        \App\Models\Report::updateOrCreate(
+            ['title' => 'River Bank Erosion in Kurigram'],
+            [
+                'user_id' => $citizens[1]->id,
+                'incident_id' => null,
+                'description' => 'Dharla river erosion taking down residential houses in Chilmari. 15 homes displaced.',
+                'location' => 'Chilmari, Kurigram',
+                'latitude' => 25.5500,
+                'longitude' => 89.6700,
+                'status' => 'pending',
+                'severity' => 'high',
+            ]
+        );
     }
 }
