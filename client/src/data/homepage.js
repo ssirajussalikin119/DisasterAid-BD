@@ -1,6 +1,7 @@
 export const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Disasters', href: '/incidents' },
+  { label: 'Report Matrix', href: '/report-incident-relations' },
   { label: 'Map', href: '/map' },
   { label: 'Volunteer', href: '/#get-involved' },
   { label: 'Relief', href: '/#how-it-works' },

@@ -112,7 +112,13 @@ export async function updateReport(id, payload) {
   return data.data.report;
 }
 
+export async function getOfficialIncidents() {
+  const { data } = await api.get('/incidents');
+  return data.data.incidents || [];
+}
+
 export async function deleteReport(id) {
   const { data } = await api.delete(`/reports/${id}`);
   return data;
 }
+

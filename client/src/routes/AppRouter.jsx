@@ -12,6 +12,7 @@ import ApplyVolunteerPage from '../pages/ApplyVolunteerPage';
 import CreateReportPage from '../pages/CreateReportPage';
 import DoctorDashboardPage from '../pages/DoctorDashboardPage';
 import IncidentListPage from '../pages/IncidentListPage';
+import ReportIncidentRelationsPage from '../pages/ReportIncidentRelationsPage';
 import HomePage from '../pages/HomePage';
 import OtpPage from '../pages/OtpPage';
 import MapPage from '../pages/MapPage';
@@ -25,6 +26,7 @@ export default function AppRouter() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/incidents" element={<IncidentListPage />} />
+        <Route path="/report-incident-relations" element={<ReportIncidentRelationsPage />} />
         <Route path="/map" element={<MapPage />} />
         <Route
           path="/incidents/new"
