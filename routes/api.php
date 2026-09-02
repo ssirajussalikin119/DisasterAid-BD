@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\ReportIncidentRelationshipController;
 use App\Http\Controllers\Api\RoleApplicationController;
 use App\Http\Controllers\Api\VolunteerController;
 use App\Http\Middleware\AuthenticateJwt;
@@ -17,6 +18,17 @@ Route::prefix('auth')->group(function (): void {
     Route::post('/send-otp', [OtpAuthController::class, 'sendOtp'])->middleware('throttle:otp-send');
     Route::post('/verify-otp', [OtpAuthController::class, 'verifyOtp'])->middleware('throttle:otp-verify');
 });
+
+// Report and Incident Relational Endpoints (Raw SQL JOINs)
+Route::prefix('report-relationships')->group(function (): void {
+    Route::get('/', [ReportIncidentRelationshipController::class, 'index']);
+    Route::get('/summary', [ReportIncidentRelationshipController::class, 'summary']);
+    Route::get('/reports-with-reporters', [ReportIncidentRelationshipController::class, 'reportsWithReporters']);
+    Route::get('/reports-with-incidents', [ReportIncidentRelationshipController::class, 'reportsWithIncidents']);
+    Route::get('/incident-wise-reports', [ReportIncidentRelationshipController::class, 'incidentWiseReports']);
+    Route::get('/complete', [ReportIncidentRelationshipController::class, 'complete']);
+});
+
 Route::get('/reports', [ReportController::class, 'index']);
 Route::get('/reports/{id}', [ReportController::class, 'show']);
 Route::get('/incidents', [IncidentController::class, 'index']);
