@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AssignmentController;
+use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\ReportIncidentRelationshipController;
+use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\RoleApplicationController;
 use App\Http\Controllers\Api\VolunteerController;
 use App\Http\Middleware\AuthenticateJwt;
@@ -18,17 +20,6 @@ Route::prefix('auth')->group(function (): void {
     Route::post('/send-otp', [OtpAuthController::class, 'sendOtp'])->middleware('throttle:otp-send');
     Route::post('/verify-otp', [OtpAuthController::class, 'verifyOtp'])->middleware('throttle:otp-verify');
 });
-
-// Report and Incident Relational Endpoints (Raw SQL JOINs)
-Route::prefix('report-relationships')->group(function (): void {
-    Route::get('/', [ReportIncidentRelationshipController::class, 'index']);
-    Route::get('/summary', [ReportIncidentRelationshipController::class, 'summary']);
-    Route::get('/reports-with-reporters', [ReportIncidentRelationshipController::class, 'reportsWithReporters']);
-    Route::get('/reports-with-incidents', [ReportIncidentRelationshipController::class, 'reportsWithIncidents']);
-    Route::get('/incident-wise-reports', [ReportIncidentRelationshipController::class, 'incidentWiseReports']);
-    Route::get('/complete', [ReportIncidentRelationshipController::class, 'complete']);
-});
-
 Route::get('/reports', [ReportController::class, 'index']);
 Route::get('/reports/{id}', [ReportController::class, 'show']);
 Route::get('/incidents', [IncidentController::class, 'index']);
@@ -56,8 +47,33 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function (): void {
+        Route::get('/applications', [RoleApplicationController::class, 'adminApplications']);
+        Route::get('/applications/sql/inner-join', [RoleApplicationController::class, 'innerJoin']);
+        Route::get('/applications/sql/left-join', [RoleApplicationController::class, 'leftJoin']);
+        Route::get('/applications/sql/union', [RoleApplicationController::class, 'unionQueue']);
+        Route::get('/applications/sql/intersect', [RoleApplicationController::class, 'intersectApproved']);
+        Route::get('/applications/sql/statistics', [RoleApplicationController::class, 'statistics']);
+        Route::get('/applications/sql/recent', [RoleApplicationController::class, 'recentFiltered']);
+        Route::get('/applications/{id}', [RoleApplicationController::class, 'detail']);
+        Route::post('/applications/{id}/approve', [RoleApplicationController::class, 'approve']);
+        Route::post('/applications/{id}/reject', [RoleApplicationController::class, 'reject']);
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::get('/users/{id}', [AdminUserController::class, 'show']);
+        Route::put('/users/{id}', [AdminUserController::class, 'update']);
+        Route::patch('/users/{id}/activate', [AdminUserController::class, 'activate']);
+        Route::patch('/users/{id}/suspend', [AdminUserController::class, 'suspend']);
         Route::get('/role-applications', [RoleApplicationController::class, 'index']);
         Route::patch('/role-applications/{roleApplication}', [RoleApplicationController::class, 'review']);
+
+        Route::get('/reports', [AdminReportController::class, 'index']);
+        Route::get('/reports/sql/inner-join', [AdminReportController::class, 'innerJoin']);
+        Route::get('/reports/sql/left-join', [AdminReportController::class, 'leftJoin']);
+        Route::get('/reports/sql/statistics', [AdminReportController::class, 'statistics']);
+        Route::get('/reports/sql/recent', [AdminReportController::class, 'recentFiltered']);
+        Route::get('/reports/{id}', [AdminReportController::class, 'detail']);
+        Route::post('/reports/{id}/verify', [AdminReportController::class, 'verify']);
+        Route::post('/reports/{id}/reject', [AdminReportController::class, 'reject']);
+        Route::post('/reports/{id}/close', [AdminReportController::class, 'close']);
     });
 });
 

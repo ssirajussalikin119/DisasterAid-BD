@@ -3,6 +3,9 @@ import AppLayout from '../layouts/AppLayout';
 import GuestRoute from '../middleware/GuestRoute';
 import ProtectedRoute from '../middleware/ProtectedRoute';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
+import AdminApplicationsPage from '../pages/AdminApplicationsPage';
+import AdminReportsPage from '../pages/AdminReportsPage';
+import AdminUsersPage from '../pages/AdminUsersPage';
 import AccountPage from '../pages/AccountPage';
 import ApplyNgoPage from '../pages/ApplyNgoPage';
 import ApplyVolunteerPage from '../pages/ApplyVolunteerPage';
@@ -102,6 +105,30 @@ export default function AppRouter() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/applications"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminApplicationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reports"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminReportsPage />
             </ProtectedRoute>
           }
         />
