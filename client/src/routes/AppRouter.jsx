@@ -19,6 +19,7 @@ import MapPage from '../pages/MapPage';
 import NgoDashboardPage from '../pages/NgoDashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import VolunteerDashboardPage from '../pages/VolunteerDashboardPage';
+import ReliefManagementPage from '../pages/ReliefManagementPage';
 
 export default function AppRouter() {
   return (
@@ -28,6 +29,7 @@ export default function AppRouter() {
         <Route path="/incidents" element={<IncidentListPage />} />
         <Route path="/report-incident-relations" element={<ReportIncidentRelationsPage />} />
         <Route path="/map" element={<MapPage />} />
+        <Route path="/relief" element={<ReliefManagementPage />} />
         <Route
           path="/incidents/new"
           element={
