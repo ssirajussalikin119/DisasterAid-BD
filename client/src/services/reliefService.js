@@ -30,3 +30,8 @@ export async function createReliefDistribution(payload) {
   const { data } = await api.post('/relief-distributions', payload);
   return data.data;
 }
+
+export async function getReliefStatistics() {
+  const { data } = await api.get('/relief-statistics');
+  return data.data;
+}

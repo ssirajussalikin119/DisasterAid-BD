@@ -11,6 +11,7 @@ import {
   deleteReliefCenter,
   getReliefCenters,
   getReliefDistributions,
+  getReliefStatistics,
 } from '../services/reliefService';
 
 const emptyCenter = { name: '', address: '', capacity: '', contact_number: '', status: 'active', latitude: '', longitude: '', available_resources: '' };
@@ -27,6 +28,7 @@ export default function ReliefManagementPage() {
   const [distributions, setDistributions] = useState([]);
   const [centerForm, setCenterForm] = useState(emptyCenter);
   const [distributionForm, setDistributionForm] = useState(emptyDistribution);
+  const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState('');
   const [editingCenterId, setEditingCenterId] = useState(null);
@@ -36,9 +38,10 @@ export default function ReliefManagementPage() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [centerRows, distributionRows] = await Promise.all([getReliefCenters(), getReliefDistributions()]);
+      const [centerRows, distributionRows, stats] = await Promise.all([getReliefCenters(), getReliefDistributions(), getReliefStatistics()]);
       setCenters(centerRows);
       setDistributions(distributionRows);
+      setStatistics(stats);
       setError('');
     } catch (exception) {
       setError(exception?.response?.data?.message ?? 'Could not load relief data. Make sure the Laravel API is running.');
@@ -178,6 +181,73 @@ export default function ReliefManagementPage() {
             </div>
           </Container>
         </section>
+
+        {statistics && (
+          <section className="bg-slate-50 py-12">
+            <Container>
+              <h2 className="font-display text-3xl font-bold">Relief Statistics</h2>
+              <p className="mt-2 text-sm text-slate-600">Calculated via RAW SQL queries.</p>
+              
+              <div className="mt-8 grid gap-8 lg:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="font-display text-xl font-bold mb-4">Total Distributions (COUNT & SUM)</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-600">Distributions</p>
+                      <p className="font-display text-2xl font-bold">{statistics.totals?.total_distributions || 0}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-600">Total Quantity</p>
+                      <p className="font-display text-2xl font-bold">{statistics.totals?.total_quantity || 0}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="font-display text-xl font-bold mb-4">High Volume Centers (HAVING)</h3>
+                  <p className="mb-4 text-xs text-slate-500">Centers with total quantity &gt; 100</p>
+                  <ul className="divide-y divide-slate-100">
+                    {statistics.high_volume_centers?.length > 0 ? (
+                      statistics.high_volume_centers.map((c, i) => (
+                        <li key={i} className="flex justify-between py-2">
+                          <span className="font-semibold">{c.center_name}</span>
+                          <span>{c.total_quantity} qty</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="py-2 text-slate-500">No high volume centers yet.</li>
+                    )}
+                  </ul>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="font-display text-xl font-bold mb-4">Quantity Per Center (GROUP BY)</h3>
+                  <ul className="divide-y divide-slate-100">
+                    {statistics.quantity_per_center?.map((c, i) => (
+                      <li key={i} className="flex justify-between py-2">
+                        <span className="font-semibold">{c.center_name}</span>
+                        <span>{c.total_quantity} qty</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="font-display text-xl font-bold mb-4">Distributions Per Center (LEFT JOIN + COUNT)</h3>
+                  <p className="mb-4 text-xs text-slate-500">Includes centers with 0 distributions</p>
+                  <ul className="divide-y divide-slate-100">
+                    {statistics.center_distribution_counts?.map((c, i) => (
+                      <li key={i} className="flex justify-between py-2">
+                        <span className="font-semibold">{c.center_name}</span>
+                        <span>{c.total_distributions} events</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </Container>
+          </section>
+        )}
 
         <section className="bg-white py-12">
           <Container>

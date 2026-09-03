@@ -29,7 +29,7 @@ export default function AppRouter() {
         <Route path="/incidents" element={<IncidentListPage />} />
         <Route path="/report-incident-relations" element={<ReportIncidentRelationsPage />} />
         <Route path="/map" element={<MapPage />} />
-        <Route path="/relief" element={<ReliefManagementPage />} />
+        <Route path="/relief-management" element={<ReliefManagementPage />} />
         <Route
           path="/incidents/new"
           element={

@@ -72,4 +72,11 @@ class ReliefDistributionController extends Controller
             'message' => 'Relief distribution deleted successfully'
         ]);
     }
+
+    public function statistics()
+    {
+        return response()->json([
+            'data' => $this->reliefDistributionService->getStatistics()
+        ]);
+    }
 }
