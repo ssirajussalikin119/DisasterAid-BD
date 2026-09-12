@@ -50,6 +50,7 @@ class OtpAuthController extends Controller
 
         return $this->successResponse('Authentication successful.', [
             'user' => new AuthenticatedUserResource($payload['user']),
+            'token' => $payload['token'],
             'token_type' => $payload['token_type'],
             'expires_at' => $payload['expires_at'],
             'dashboard_route' => $payload['dashboard_route'],

@@ -53,34 +53,36 @@ export default function MapPage() {
   const [selectedCategories, setSelectedCategories] = useState(new Set());
   const [selectedSources, setSelectedSources] = useState(new Set());
 
+  const loadIncidents = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
+    try {
+      const liveIncidents = await getMapIncidents();
+      setIncidents(liveIncidents);
+      setApiWarning(liveIncidents.length > 0 ? '' : 'No live reports with map coordinates are available yet.');
+      setSelectedCategories((prev) => (prev.size === 0 ? new Set(liveIncidents.map((i) => i.type)) : prev));
+      setSelectedSources((prev) => (prev.size === 0 ? new Set(liveIncidents.map((i) => i.source)) : prev));
+    } catch {
+      setIncidents([]);
+      setApiWarning('Live report data is unavailable. Check that the backend is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    let active = true;
+    loadIncidents(true);
 
-    const loadIncidents = async () => {
-      try {
-        const liveIncidents = await getMapIncidents();
-        if (!active) return;
+    // Live 15s revalidation interval + custom event listeners
+    const interval = setInterval(() => loadIncidents(false), 15000);
+    const handleUpdateEvent = () => loadIncidents(false);
 
-        setIncidents(liveIncidents);
-        setApiWarning(liveIncidents.length > 0 ? '' : 'No live reports with map coordinates are available yet.');
-        setSelectedCategories(new Set(liveIncidents.map((incident) => incident.type)));
-        setSelectedSources(new Set(liveIncidents.map((incident) => incident.source)));
-      } catch {
-        if (!active) return;
-
-        setIncidents([]);
-        setSelectedCategories(new Set());
-        setSelectedSources(new Set());
-        setApiWarning('Live report data is unavailable. Check that the backend is running.');
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-
-    loadIncidents();
+    window.addEventListener('disasteraid:report-created', handleUpdateEvent);
+    window.addEventListener('disasteraid:report-updated', handleUpdateEvent);
 
     return () => {
-      active = false;
+      clearInterval(interval);
+      window.removeEventListener('disasteraid:report-created', handleUpdateEvent);
+      window.removeEventListener('disasteraid:report-updated', handleUpdateEvent);
     };
   }, []);
 
@@ -104,9 +106,9 @@ export default function MapPage() {
   }, [incidents, searchTerm, selectedCategories, selectedSources]);
 
   const focusedIncident = useMemo(() => {
-    const incidentId = searchParams.get('incident');
-    if (!incidentId) return null;
-    return incidents.find((incident) => String(incident.id) === incidentId) ?? null;
+    const targetId = searchParams.get('report') || searchParams.get('incident');
+    if (!targetId) return null;
+    return incidents.find((incident) => String(incident.id) === String(targetId)) ?? null;
   }, [incidents, searchParams]);
 
   const toggleSetValue = (setter, value) => {
@@ -126,7 +128,7 @@ export default function MapPage() {
 
   const handleMarkerClick = (incident) => {
     const next = new URLSearchParams(searchParams);
-    next.set('incident', incident.id);
+    next.set('report', incident.id);
     setSearchParams(next, { replace: true });
   };
 

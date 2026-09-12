@@ -1,13 +1,25 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
 import { fetchCurrentUser, logoutUser, sendOtp, updateProfileUser, verifyOtp } from '../services/authService';
+import api from '../services/api';
 
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(() => sessionStorage.getItem('auth_token') || null);
   const [bootstrapping, setBootstrapping] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (token) {
+      sessionStorage.setItem('auth_token', token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      sessionStorage.removeItem('auth_token');
+      delete api.defaults.headers.common['Authorization'];
+    }
+  }, [token]);
 
   useEffect(() => {
     let alive = true;
@@ -15,33 +27,24 @@ export function AuthProvider({ children }) {
     async function bootstrap() {
       try {
         const response = await fetchCurrentUser();
-        if (!alive) {
-          return;
-        }
-
+        if (!alive) return;
         setUser(response.data.user);
       } catch {
-        if (!alive) {
-          return;
-        }
-
+        if (!alive) return;
         setUser(null);
+        setToken(null);
       } finally {
-        if (alive) {
-          setBootstrapping(false);
-        }
+        if (alive) setBootstrapping(false);
       }
     }
 
     bootstrap();
-
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, []);
 
   const value = useMemo(() => ({
     user,
+    token,
     isAuthenticated: Boolean(user),
     bootstrapping,
     busy,
@@ -64,9 +67,11 @@ export function AuthProvider({ children }) {
       try {
         const response = await verifyOtp(payload);
         setUser(response.user);
+        if (response.token) setToken(response.token);
         return response;
       } catch (exception) {
         setUser(null);
+        setToken(null);
         setError(exception?.response?.data?.message ?? 'The OTP could not be verified.');
         throw exception;
       } finally {
@@ -76,6 +81,7 @@ export function AuthProvider({ children }) {
     logout: async () => {
       setBusy(true);
       setUser(null);
+      setToken(null);
       try {
         await logoutUser();
       } finally {
@@ -94,7 +100,7 @@ export function AuthProvider({ children }) {
     },
     clearError: () => setError(null),
     setUser,
-  }), [busy, bootstrapping, error, user]);
+  }), [busy, bootstrapping, error, token, user]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
