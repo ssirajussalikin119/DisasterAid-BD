@@ -104,3 +104,31 @@ a {
     margin-bottom: 24px !important;
   }
 }
+
+.district-popup .leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 0;
+}
+
+.district-popup .leaflet-popup-content {
+  margin: 12px;
+}
+
+.district-tooltip {
+  background: rgba(15, 23, 42, 0.9);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.district-tooltip::before {
+  border-top-color: rgba(15, 23, 42, 0.9);
+}
+
+.leaflet-interactive {
+  cursor: pointer !important;
+}

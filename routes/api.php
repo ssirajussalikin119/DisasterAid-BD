@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\MapController;
 use App\Http\Controllers\Api\ReportIncidentRelationshipController;
 use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\RoleApplicationController;
@@ -77,6 +78,7 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
         Route::post('/reports/{id}/close', [AdminReportController::class, 'close']);
     });
 });
+Route::get('/map-data', [MapController::class, 'index']);
 Route::get('/relief-statistics', [ReliefDistributionController::class, 'statistics']);
 Route::apiResource('relief-centers', ReliefCenterController::class)->only(['index', 'show']);
 Route::apiResource('relief-distributions', ReliefDistributionController::class)->only(['index', 'show']);
