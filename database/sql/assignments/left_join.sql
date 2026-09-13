@@ -1,0 +1,1 @@
+SELECT i.id as incident_id, i.title, i.district, a.id as assignment_id, a.status, u.name as volunteer_name FROM incidents i LEFT JOIN assignments a ON i.id = a.incident_id LEFT JOIN volunteers v ON a.volunteer_id = v.id LEFT JOIN users u ON v.user_id = u.id ORDER BY i.created_at DESC;

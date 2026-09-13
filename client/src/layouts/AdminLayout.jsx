@@ -10,7 +10,7 @@ const navigation = [
   { label: 'Reports', to: '/admin/reports', icon: 'reports' },
   { label: 'Incidents', icon: 'incidents' },
   { label: 'Volunteers', icon: 'volunteers' },
-  { label: 'Assignments', icon: 'assignments' },
+  { label: 'Assignments', to: '/admin/assignments', icon: 'assignments' },
   { label: 'Relief & Resources', icon: 'relief' },
   { label: 'Verification', icon: 'verification' },
   { label: 'Analytics', icon: 'analytics' },

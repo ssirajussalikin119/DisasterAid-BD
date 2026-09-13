@@ -9,6 +9,8 @@ use App\Services\AssignmentService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class AssignmentController extends Controller
 {
@@ -71,5 +73,41 @@ class AssignmentController extends Controller
             'accepted' => ['sometimes', 'boolean'],
             'status' => ['sometimes', 'string', 'in:pending,accepted,in_progress,completed,cancelled'],
         ];
+    }
+
+    public function innerJoin(): JsonResponse
+    {
+        $sql = File::get(base_path('database/sql/assignments/inner_join.sql'));
+        return response()->json(['data' => DB::select($sql)]);
+    }
+
+    public function leftJoin(): JsonResponse
+    {
+        $sql = File::get(base_path('database/sql/assignments/left_join.sql'));
+        return response()->json(['data' => DB::select($sql)]);
+    }
+
+    public function rightJoin(): JsonResponse
+    {
+        $sql = File::get(base_path('database/sql/assignments/right_join.sql'));
+        return response()->json(['data' => DB::select($sql)]);
+    }
+
+    public function fullOuterJoin(): JsonResponse
+    {
+        $sql = File::get(base_path('database/sql/assignments/full_outer_join.sql'));
+        return response()->json(['data' => DB::select($sql)]);
+    }
+
+    public function exceptUnassigned(): JsonResponse
+    {
+        $sql = File::get(base_path('database/sql/assignments/except_unassigned.sql'));
+        return response()->json(['data' => DB::select($sql)]);
+    }
+
+    public function aggregateCounts(): JsonResponse
+    {
+        $sql = File::get(base_path('database/sql/assignments/aggregate_counts.sql'));
+        return response()->json(['data' => DB::select($sql)]);
     }
 }

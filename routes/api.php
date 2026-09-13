@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ReportIncidentRelationshipController;
 use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\RoleApplicationController;
 use App\Http\Controllers\Api\VolunteerController;
+use App\Http\Controllers\Api\ResponseNetworkController;
 use App\Http\Middleware\AuthenticateJwt;
 use App\Http\Middleware\EnsureRole;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,12 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
 Route::middleware([AuthenticateJwt::class, 'role:admin,volunteer'])->group(function (): void {
     Route::apiResource('incidents', IncidentController::class)->except(['index', 'show']);
     Route::apiResource('volunteers', VolunteerController::class);
+    Route::get('assignments/sql/inner-join', [AssignmentController::class, 'innerJoin']);
+    Route::get('assignments/sql/left-join', [AssignmentController::class, 'leftJoin']);
+    Route::get('assignments/sql/right-join', [AssignmentController::class, 'rightJoin']);
+    Route::get('assignments/sql/full-outer-join', [AssignmentController::class, 'fullOuterJoin']);
+    Route::get('assignments/sql/except', [AssignmentController::class, 'exceptUnassigned']);
+    Route::get('assignments/sql/aggregate', [AssignmentController::class, 'aggregateCounts']);
     Route::apiResource('assignments', AssignmentController::class);
 });
 Route::middleware([AuthenticateJwt::class])->group(function (): void {
@@ -86,4 +93,10 @@ Route::apiResource('relief-distributions', ReliefDistributionController::class)-
 Route::middleware([AuthenticateJwt::class])->group(function (): void {
     Route::apiResource('relief-centers', ReliefCenterController::class)->except(['index', 'show']);
     Route::apiResource('relief-distributions', ReliefDistributionController::class)->except(['index', 'show']);
+});
+
+Route::prefix('response-network')->group(function (): void {
+    Route::get('/', [ResponseNetworkController::class, 'allMembers']);
+    Route::get('/assigned', [ResponseNetworkController::class, 'assignedVolunteers']);
+    Route::get('/available', [ResponseNetworkController::class, 'availableVolunteers']);
 });

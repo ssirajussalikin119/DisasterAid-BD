@@ -20,6 +20,8 @@ import NgoDashboardPage from '../pages/NgoDashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import VolunteerDashboardPage from '../pages/VolunteerDashboardPage';
 import ReliefManagementPage from '../pages/ReliefManagementPage';
+import ResponseNetworkPage from '../pages/ResponseNetworkPage';
+import VolunteerAssignmentPage from '../pages/VolunteerAssignmentPage';
 
 export default function AppRouter() {
   return (
@@ -30,6 +32,7 @@ export default function AppRouter() {
         <Route path="/report-incident-relations" element={<ReportIncidentRelationsPage />} />
         <Route path="/map" element={<MapPage />} />
         <Route path="/relief-management" element={<ReliefManagementPage />} />
+        <Route path="/response-network" element={<ResponseNetworkPage />} />
         <Route
           path="/incidents/new"
           element={
@@ -131,6 +134,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/assignments"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'volunteer']}>
+              <VolunteerAssignmentPage />
             </ProtectedRoute>
           }
         />

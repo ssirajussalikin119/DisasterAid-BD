@@ -1,0 +1,1 @@
+SELECT v.id as volunteer_id, u.name as volunteer_name, u.email, a.id as assignment_id, a.status, i.title as incident_title FROM assignments a RIGHT JOIN volunteers v ON a.volunteer_id = v.id INNER JOIN users u ON v.user_id = u.id LEFT JOIN incidents i ON a.incident_id = i.id ORDER BY u.name ASC;

@@ -1,0 +1,1 @@
+SELECT v.id as volunteer_id, u.name as volunteer_name FROM volunteers v INNER JOIN users u ON v.user_id = u.id EXCEPT SELECT v.id as volunteer_id, u.name as volunteer_name FROM volunteers v INNER JOIN users u ON v.user_id = u.id INNER JOIN assignments a ON v.id = a.volunteer_id ORDER BY volunteer_name;

@@ -1,0 +1,1 @@
+SELECT i.id as incident_id, i.title as incident_title, v.id as volunteer_id, u.name as volunteer_name, a.id as assignment_id, a.status FROM incidents i FULL OUTER JOIN assignments a ON i.id = a.incident_id FULL OUTER JOIN volunteers v ON a.volunteer_id = v.id LEFT JOIN users u ON v.user_id = u.id;

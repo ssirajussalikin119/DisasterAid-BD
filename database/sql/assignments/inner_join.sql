@@ -1,0 +1,1 @@
+SELECT a.id, a.status, a.created_at, u.name as volunteer_name, i.title as incident_title, i.district as incident_district FROM assignments a INNER JOIN volunteers v ON a.volunteer_id = v.id INNER JOIN users u ON v.user_id = u.id INNER JOIN incidents i ON a.incident_id = i.id ORDER BY a.created_at DESC;

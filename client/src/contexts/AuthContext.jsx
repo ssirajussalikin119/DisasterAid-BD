@@ -6,17 +6,17 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => sessionStorage.getItem('auth_token') || null);
+  const [token, setToken] = useState(() => localStorage.getItem('auth_token') || null);
   const [bootstrapping, setBootstrapping] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (token) {
-      sessionStorage.setItem('auth_token', token);
+      localStorage.setItem('auth_token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
-      sessionStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_token');
       delete api.defaults.headers.common['Authorization'];
     }
   }, [token]);
