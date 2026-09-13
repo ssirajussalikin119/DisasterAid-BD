@@ -63,7 +63,7 @@ class MapService
 
         // 1. Process Verified Incidents
         $incidents = Incident::query()
-            ->where('verified', true)
+            ->whereRaw('"verified" = TRUE')
             ->get();
 
         foreach ($incidents as $incident) {
