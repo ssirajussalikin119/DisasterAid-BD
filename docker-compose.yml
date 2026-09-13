@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    container_name: disasteraid_app
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    container_name: disasteraid_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    depends_on:
+      - app
