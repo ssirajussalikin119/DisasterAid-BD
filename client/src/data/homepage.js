@@ -7,6 +7,7 @@ export const navLinks = [
   { label: 'Relief', href: '/relief-management' },
   { label: 'News', href: '/#news-featured-stories' },
   { label: 'About', href: '/#who-we-are' },
+  { label: 'Response Network', href: '/response-network' },
 ];
 
 export const heroStats = [

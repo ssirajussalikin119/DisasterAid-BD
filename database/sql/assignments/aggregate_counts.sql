@@ -1,0 +1,1 @@
+SELECT i.id as incident_id, i.title, COUNT(a.id) as assignment_count FROM incidents i LEFT JOIN assignments a ON i.id = a.incident_id GROUP BY i.id, i.title ORDER BY assignment_count DESC;

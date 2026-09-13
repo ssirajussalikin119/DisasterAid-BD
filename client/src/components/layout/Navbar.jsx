@@ -21,7 +21,7 @@ export default function Navbar() {
           <Link to="/" className="shrink-0">
             <Logo />
           </Link>
-          <nav className="flex flex-wrap items-center gap-x-5 gap-y-3 text-sm font-semibold text-slate-700 lg:justify-center">
+          <nav className="flex flex-wrap items-center gap-x-3 xl:gap-x-5 gap-y-3 text-sm font-semibold text-slate-700 lg:justify-center">
             {navLinks.map((item) => (
               <a key={item.label} href={item.href} className="transition hover:text-ink">
                 {item.label}
