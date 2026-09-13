@@ -42,7 +42,7 @@ class OtpService
             'expires_at' => now()->addMinutes(5),
         ]);
 
-        if (app()->environment(['local', 'development'])) {
+        if (app()->environment(['local', 'development']) || filter_var(env('OTP_LOG_ENABLED', false), FILTER_VALIDATE_BOOLEAN)) {
             Log::info('Development OTP generated.', [
                 'phone' => $phone,
                 'code' => $code,
