@@ -27,6 +27,15 @@ Route::get('/reports', [ReportController::class, 'index']);
 Route::get('/reports/{id}', [ReportController::class, 'show']);
 Route::get('/incidents', [IncidentController::class, 'index']);
 Route::get('/incidents/{id}', [IncidentController::class, 'show']);
+
+Route::prefix('report-relationships')->group(function (): void {
+    Route::get('/', [ReportIncidentRelationshipController::class, 'index']);
+    Route::get('/summary', [ReportIncidentRelationshipController::class, 'summary']);
+    Route::get('/reports-with-reporters', [ReportIncidentRelationshipController::class, 'reportsWithReporters']);
+    Route::get('/reports-with-incidents', [ReportIncidentRelationshipController::class, 'reportsWithIncidents']);
+    Route::get('/incident-wise-reports', [ReportIncidentRelationshipController::class, 'incidentWiseReports']);
+    Route::get('/complete', [ReportIncidentRelationshipController::class, 'complete']);
+});
 Route::middleware([AuthenticateJwt::class])->group(function (): void {
     Route::post('/reports', [ReportController::class, 'store']);
     Route::put('/reports/{id}', [ReportController::class, 'update']);
