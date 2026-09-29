@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ReportIncidentRelationshipController;
 use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\RoleApplicationController;
 use App\Http\Controllers\Api\VolunteerController;
+use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\ResponseNetworkController;
 use App\Http\Middleware\AuthenticateJwt;
 use App\Http\Middleware\EnsureRole;
@@ -65,6 +66,7 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function (): void {
+        Route::get('/dashboard/statistics', [AdminDashboardController::class, 'statistics']);
         Route::get('/applications', [RoleApplicationController::class, 'adminApplications']);
         Route::get('/applications/sql/inner-join', [RoleApplicationController::class, 'innerJoin']);
         Route::get('/applications/sql/left-join', [RoleApplicationController::class, 'leftJoin']);

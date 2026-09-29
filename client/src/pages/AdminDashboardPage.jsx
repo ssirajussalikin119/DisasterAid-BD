@@ -1,14 +1,9 @@
+import { useState, useEffect } from 'react';
 import AdminLayout from '../layouts/AdminLayout';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import SecondaryButton from '../components/ui/SecondaryButton';
 import StatCard from '../components/ui/StatCard';
-
-const summaries = [
-  ['--', 'Total users', 'Waiting for user management'],
-  ['--', 'Pending applications', 'Waiting for review workflow'],
-  ['--', 'Pending reports', 'Waiting for moderation workflow'],
-  ['--', 'Active incidents', 'Waiting for incident management'],
-];
+import { getAdminDashboardStatistics } from '../services/adminDashboardService';
 
 function EmptyPanel({ title, description }) {
   return (
@@ -25,6 +20,38 @@ function EmptyPanel({ title, description }) {
 }
 
 export default function AdminDashboardPage() {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await getAdminDashboardStatistics();
+        if (response.success) {
+          setStats(response.data);
+        } else {
+          setError('Failed to fetch statistics');
+        }
+      } catch (err) {
+        setError(err.message || 'An error occurred while fetching statistics');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const summaries = stats ? [
+    [stats.totalUsers ?? '--', 'Total users', 'All registered accounts'],
+    [stats.pendingReports ?? '--', 'Pending reports', 'Awaiting verification'],
+    [stats.pendingVolunteerApplications ?? '--', 'Pending volunteer apps', 'Awaiting approval'],
+    [stats.pendingNgoApplications ?? '--', 'Pending NGO apps', 'Awaiting approval'],
+    [stats.activeIncidents ?? '--', 'Active incidents', 'Ongoing emergencies'],
+    [stats.openReliefRequests ?? '--', 'Open relief requests', 'Awaiting fulfillment'],
+    [stats.activeVolunteers ?? '--', 'Active volunteers', 'Ready for assignment'],
+  ] : [];
+
   return (
     <AdminLayout>
       <div className="mx-auto max-w-7xl">
@@ -40,9 +67,17 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {summaries.map(([value, label, description]) => <StatCard key={label} value={value} label={label} description={description} />)}
-        </div>
+        {loading ? (
+          <div className="mt-10 p-6 text-center text-slate-500 font-medium">Loading statistics...</div>
+        ) : error ? (
+          <div className="mt-10 p-6 text-center text-red-500 font-medium bg-red-50 rounded-xl">{error}</div>
+        ) : (!stats ? (
+          <div className="mt-10 p-6 text-center text-slate-500 font-medium bg-slate-50 rounded-xl">No data available</div>
+        ) : (
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {summaries.map(([value, label, description]) => <StatCard key={label} value={value} label={label} description={description} />)}
+          </div>
+        ))}
 
         <div className="mt-8 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
           <div className="space-y-6">
