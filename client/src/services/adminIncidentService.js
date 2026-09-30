@@ -29,3 +29,8 @@ export const closeAdminIncident = async (id) => {
     const response = await api.patch(`/admin/incidents/${id}/close`);
     return response.data;
 };
+
+export const finalizeAdminIncident = async (id) => {
+    const response = await api.patch(`/admin/incidents/${id}/finalize`);
+    return response.data;
+};

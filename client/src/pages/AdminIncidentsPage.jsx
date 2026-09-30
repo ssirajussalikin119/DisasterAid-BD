@@ -7,7 +7,8 @@ import {
     createAdminIncident, 
     updateAdminIncident,
     updateAdminIncidentStatus,
-    closeAdminIncident
+    closeAdminIncident,
+    finalizeAdminIncident
 } from '../services/adminIncidentService';
 
 export default function AdminIncidentsPage() {
@@ -99,6 +100,18 @@ export default function AdminIncidentsPage() {
         }
     };
 
+    const handleFinalizeIncident = async (id) => {
+        if (window.confirm('Are you sure you want to finalize this incident? This requires all related assignments to be completed.')) {
+            try {
+                await finalizeAdminIncident(id);
+                alert('Incident finalized successfully.');
+                fetchIncidents();
+            } catch (err) {
+                alert(err.response?.data?.message || err.message || 'Error finalizing incident. Check if there are incomplete assignments.');
+            }
+        }
+    };
+
     return (
         <AdminLayout>
             <div className="mx-auto max-w-7xl">
@@ -142,6 +155,9 @@ export default function AdminIncidentsPage() {
                                                 <SecondaryButton onClick={() => handleStatusUpdate(incident.id, incident.status === 'monitoring' ? 'active' : 'monitoring')} className="text-sm py-1 px-3">
                                                     Mark as {incident.status === 'monitoring' ? 'Active' : 'Monitoring'}
                                                 </SecondaryButton>
+                                                <button onClick={() => handleFinalizeIncident(incident.id)} className="text-sm py-1 px-4 rounded-md font-medium transition-colors bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm">
+                                                    Finalize
+                                                </button>
                                                 <SecondaryButton onClick={() => handleCloseIncident(incident.id)} className="text-sm py-1 px-3 bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
                                                     Resolve Incident
                                                 </SecondaryButton>

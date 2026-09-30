@@ -105,6 +105,7 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
         Route::get('/incidents/{id}', [AdminIncidentController::class, 'show']);
         Route::put('/incidents/{id}', [AdminIncidentController::class, 'update']);
         Route::patch('/incidents/{id}/status', [AdminIncidentController::class, 'updateStatus']);
+        Route::patch('/incidents/{id}/finalize', [AdminIncidentController::class, 'finalize']);
         Route::patch('/incidents/{id}/close', [AdminIncidentController::class, 'close']);
         Route::get('/relief-requests', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'index']);
         Route::patch('/relief-requests/{id}/status', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'updateStatus']);
