@@ -3,6 +3,7 @@ import AppLayout from '../layouts/AppLayout';
 import GuestRoute from '../middleware/GuestRoute';
 import ProtectedRoute from '../middleware/ProtectedRoute';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
+import AdminAnalyticsPage from '../pages/AdminAnalyticsPage';
 import AdminIncidentsPage from '../pages/AdminIncidentsPage';
 import AdminApplicationsPage from '../pages/AdminApplicationsPage';
 import AdminReportsPage from '../pages/AdminReportsPage';
@@ -112,6 +113,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminAnalyticsPage />
             </ProtectedRoute>
           }
         />

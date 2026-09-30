@@ -97,6 +97,21 @@ export default function AdminDashboardPage() {
             </section>
           </div>
         </div>
+
+        <section className="mt-8 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.05)]">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="font-display text-xl font-bold tracking-tight text-ink">Operations analytics</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700">
+                District-level analysis, incident severity, disaster types, relief and volunteer activity — powered by
+                the <span className="font-semibold text-ink">district_disaster_summary</span> PostgreSQL view.
+              </p>
+            </div>
+            <PrimaryButton to="/admin/analytics" className="shrink-0">
+              View full analytics
+            </PrimaryButton>
+          </div>
+        </section>
       </div>
     </AdminLayout>
   );
