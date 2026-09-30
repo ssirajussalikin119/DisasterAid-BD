@@ -41,6 +41,26 @@ class AuthService
         auth('api')->logout();
     }
 
+    /**
+     * Exchange the current (possibly expired) access token for a fresh one.
+     * Refresh validates the refresh window and the token blacklist, then
+     * rotates: the presented token is blacklisted so it cannot be reused.
+     */
+    public function refreshToken(): array
+    {
+        $token = auth('api')->refresh();
+
+        auth('api')->setToken($token);
+
+        $user = auth('api')->user();
+
+        if (! $user instanceof User) {
+            throw new UnauthorizedHttpException('', 'Authentication required.');
+        }
+
+        return $this->buildPayload($user, $token);
+    }
+
     public function currentUser(): User
     {
         $user = auth('api')->user();

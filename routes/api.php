@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function (): void {
     Route::post('/send-otp', [OtpAuthController::class, 'sendOtp'])->middleware('throttle:otp-send');
     Route::post('/verify-otp', [OtpAuthController::class, 'verifyOtp'])->middleware('throttle:otp-verify');
+    Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('throttle:6,1');
 });
 Route::get('/reports', [ReportController::class, 'index']);
 Route::get('/reports/{id}', [ReportController::class, 'show']);
