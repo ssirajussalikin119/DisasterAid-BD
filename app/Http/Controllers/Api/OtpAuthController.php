@@ -21,6 +21,8 @@ class OtpAuthController extends Controller
 
     public function sendOtp(Request $request): JsonResponse
     {
+        $this->normalizePhoneInput($request);
+
         $validated = $request->validate([
             'phone' => ['required', 'string', 'regex:/^\\+8801[3-9]\\d{8}$/'],
         ]);
@@ -34,6 +36,8 @@ class OtpAuthController extends Controller
 
     public function verifyOtp(Request $request): JsonResponse
     {
+        $this->normalizePhoneInput($request);
+
         $validated = $request->validate([
             'phone' => ['required', 'string', 'regex:/^\\+8801[3-9]\\d{8}$/'],
             'code' => ['required', 'string', 'digits:6'],
@@ -55,5 +59,14 @@ class OtpAuthController extends Controller
             'expires_at' => $payload['expires_at'],
             'dashboard_route' => $payload['dashboard_route'],
         ])->cookie($this->authService->cookie($payload['token']));
+    }
+
+    private function normalizePhoneInput(Request $request): void
+    {
+        $phone = $request->input('phone');
+
+        if (is_string($phone)) {
+            $request->merge(['phone' => OtpService::normalizePhone($phone)]);
+        }
     }
 }

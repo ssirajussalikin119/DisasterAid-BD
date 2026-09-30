@@ -12,6 +12,28 @@ use Illuminate\Validation\ValidationException;
 
 class OtpService
 {
+    /**
+     * Canonicalize accepted phone input to the E.164 Bangladesh format
+     * (+8801XXXXXXXX). This is a superset of the previous rule: every input
+     * that was accepted before is still accepted, unchanged inputs pass
+     * through, and alternate formats map onto the same canonical identity
+     * instead of being rejected.
+     */
+    public static function normalizePhone(string $phone): string
+    {
+        $compact = preg_replace('/[\\s\\-().]/', '', $phone) ?? $phone;
+
+        if (preg_match('/^01[3-9]\\d{8}$/', $compact) === 1) {
+            return '+880'.substr($compact, 1);
+        }
+
+        if (preg_match('/^(?:00)?8801[3-9]\\d{8}$/', $compact) === 1) {
+            return '+'.ltrim($compact, '0');
+        }
+
+        return $compact;
+    }
+
     public function generate(string $phone): void
     {
         $minuteKey = "otp:send:minute:{$phone}";

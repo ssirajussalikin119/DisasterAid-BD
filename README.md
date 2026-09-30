@@ -45,7 +45,17 @@ The primary objective of this project is to improve disaster response and relief
 
 ## 🔐 Authentication
 
-- JWT Authentication
+- JWT Authentication (OTP sign-in via Bangladesh phone number)
+- Silent token refresh: `POST /api/auth/refresh` exchanges an expired access
+  token for a new one within the refresh window (default 14 days, revoked on
+  logout). The axios client retries a failed request once after refreshing and
+  only ends the session when the refresh itself fails with a server response —
+  network errors never log the user out.
+- Access-token lifetime is configured with `JWT_TTL` (default 60 minutes).
+- Phone numbers are normalized to `+8801XXXXXXXX` (`01…`, `8801…`, `008801…`
+  and spaced/dashed variants all map to the same account).
+- OTP security: 5-minute expiry, 5 wrong-attempt lockout, 60-second per-phone
+  resend cooldown (10/day), previous codes invalidated on resend, single use.
 - Role-based Access Control
 
 Supported Roles:
