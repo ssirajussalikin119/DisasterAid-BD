@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ReliefDistributionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\AdminUserController;
+use App\Http\Controllers\Api\AdminAnalyticsController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\ReportController;
@@ -68,6 +69,8 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
 
     Route::prefix('admin')->middleware('role:admin')->group(function (): void {
         Route::get('/dashboard/statistics', [AdminDashboardController::class, 'statistics']);
+        Route::get('/analytics/district-summary', [AdminAnalyticsController::class, 'districtSummary']);
+        Route::get('/analytics/overview', [AdminAnalyticsController::class, 'overview']);
         Route::get('/applications', [RoleApplicationController::class, 'adminApplications']);
         Route::get('/applications/sql/inner-join', [RoleApplicationController::class, 'innerJoin']);
         Route::get('/applications/sql/left-join', [RoleApplicationController::class, 'leftJoin']);
