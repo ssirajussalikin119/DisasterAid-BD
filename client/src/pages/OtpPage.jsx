@@ -8,6 +8,17 @@ import { useAuth } from '../hooks/useAuth';
 
 const phonePattern = /^\+8801[3-9]\d{8}$/;
 
+function normalizePhone(value) {
+  const compact = value.replace(/[\s\-().]/g, '');
+  if (/^01[3-9]\d{8}$/.test(compact)) {
+    return `+880${compact.slice(1)}`;
+  }
+  if (/^(?:00)?8801[3-9]\d{8}$/.test(compact)) {
+    return `+${compact.replace(/^00/, '')}`;
+  }
+  return compact;
+}
+
 export default function OtpPage() {
   const { sendOtp, verifyOtp, clearError, busy, error } = useAuth();
   const [phone, setPhone] = useState('');
@@ -35,13 +46,15 @@ export default function OtpPage() {
     clearError();
     setFieldError('');
 
-    if (!phonePattern.test(phone)) {
+    const normalizedPhone = normalizePhone(phone);
+    if (!phonePattern.test(normalizedPhone)) {
       setFieldError('Use a Bangladesh number in the format +8801XXXXXXXXX.');
       return;
     }
 
     try {
-      await sendOtp(phone);
+      setPhone(normalizedPhone);
+      await sendOtp(normalizedPhone);
       setStep('code');
       setSecondsLeft(300);
     } catch (exception) {
@@ -64,11 +77,18 @@ export default function OtpPage() {
 
     try {
       const response = await verifyOtp({ phone, code });
-      navigate(response.dashboard_route ?? '/account', { replace: true, state: { from: location.state?.from } });
+      navigate(location.state?.from ?? response.dashboard_route ?? '/account', { replace: true });
     } catch (exception) {
-      const message = exception?.response?.data?.errors?.code?.[0];
-      if (message) {
-        setFieldError(message);
+      const data = exception?.response?.data;
+      const attempts = Number(data?.attempts ?? 0);
+      if (attempts > 0) {
+        clearError();
+        if (attempts >= 5) {
+          setFieldError('Too many incorrect attempts. Request a new OTP.');
+        } else {
+          const remaining = 5 - attempts;
+          setFieldError(`Incorrect code. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`);
+        }
       }
     }
   };

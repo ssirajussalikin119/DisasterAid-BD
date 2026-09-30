@@ -13,7 +13,7 @@ const navigation = [
   { label: 'Assignments', to: '/admin/assignments', icon: 'assignments' },
   { label: 'Relief & Resources', icon: 'relief' },
   { label: 'Verification', icon: 'verification' },
-  { label: 'Analytics', icon: 'analytics' },
+  { label: 'Analytics', to: '/admin/analytics', icon: 'analytics' },
   { label: 'Audit Logs', icon: 'audit' },
 ];
 

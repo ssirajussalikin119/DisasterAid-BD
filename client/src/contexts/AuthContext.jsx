@@ -22,6 +22,23 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   useEffect(() => {
+    const handleTokenRefreshed = (event) => {
+      if (event.detail?.token) setToken(event.detail.token);
+    };
+    const handleSessionExpired = () => {
+      setUser(null);
+      setToken(null);
+    };
+
+    window.addEventListener('auth:token-refreshed', handleTokenRefreshed);
+    window.addEventListener('auth:session-expired', handleSessionExpired);
+    return () => {
+      window.removeEventListener('auth:token-refreshed', handleTokenRefreshed);
+      window.removeEventListener('auth:session-expired', handleSessionExpired);
+    };
+  }, []);
+
+  useEffect(() => {
     let alive = true;
 
     async function bootstrap() {

@@ -23,6 +23,23 @@ class AuthController extends Controller
         return $this->successResponse('Logout successful.')->cookie($this->authService->forgetCookie());
     }
 
+    public function refresh(): JsonResponse
+    {
+        try {
+            $payload = $this->authService->refreshToken();
+        } catch (\Throwable) {
+            return $this->errorResponse('Session expired. Please sign in again.', [], 401);
+        }
+
+        return $this->successResponse('Session refreshed.', [
+            'user' => new AuthenticatedUserResource($payload['user']),
+            'token' => $payload['token'],
+            'token_type' => $payload['token_type'],
+            'expires_at' => $payload['expires_at'],
+            'dashboard_route' => $payload['dashboard_route'],
+        ])->cookie($this->authService->cookie($payload['token']));
+    }
+
     public function me(): JsonResponse
     {
         $user = $this->authService->currentUser();
