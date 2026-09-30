@@ -102,6 +102,16 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
         Route::put('/incidents/{id}', [AdminIncidentController::class, 'update']);
         Route::patch('/incidents/{id}/status', [AdminIncidentController::class, 'updateStatus']);
         Route::patch('/incidents/{id}/close', [AdminIncidentController::class, 'close']);
+        Route::get('/relief-requests', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'index']);
+        Route::patch('/relief-requests/{id}/status', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'updateStatus']);
+        Route::get('/relief-requests/sql/inner-join', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'innerJoin']);
+        Route::get('/relief-requests/sql/left-join', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'leftJoin']);
+        Route::get('/relief-requests/sql/right-join', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'rightJoin']);
+        Route::get('/relief-requests/sql/full-outer-join', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'fullOuterJoin']);
+        Route::get('/relief-requests/sql/except', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'exceptQuery']);
+        Route::get('/relief-requests/sql/intersect', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'intersectQuery']);
+        Route::get('/relief-requests/sql/union', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'unionQuery']);
+        Route::get('/relief-requests/sql/aggregate', [App\Http\Controllers\Api\AdminReliefRequestController::class, 'aggregate']);
     });
 });
 Route::get('/map-data', [MapController::class, 'index']);

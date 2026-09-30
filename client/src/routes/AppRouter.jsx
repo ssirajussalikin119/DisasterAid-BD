@@ -7,6 +7,7 @@ import AdminIncidentsPage from '../pages/AdminIncidentsPage';
 import AdminApplicationsPage from '../pages/AdminApplicationsPage';
 import AdminReportsPage from '../pages/AdminReportsPage';
 import AdminUsersPage from '../pages/AdminUsersPage';
+import AdminReliefRequestsPage from '../pages/AdminReliefRequestsPage';
 import AccountPage from '../pages/AccountPage';
 import ApplyNgoPage from '../pages/ApplyNgoPage';
 import ApplyVolunteerPage from '../pages/ApplyVolunteerPage';
@@ -143,6 +144,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/relief-requests"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminReliefRequestsPage />
             </ProtectedRoute>
           }
         />
