@@ -33,9 +33,15 @@ class ReliefDistributionController extends Controller
 'distributed_at' => 'nullable|date',
         ]);
 
-        return response()->json([
-            'data' => $this->reliefDistributionService->create($data)
-        ], 201);
+        try {
+            return response()->json([
+                'data' => $this->reliefDistributionService->create($data)
+            ], 201);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 
     public function show($id)
