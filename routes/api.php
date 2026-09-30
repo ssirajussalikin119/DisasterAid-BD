@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\RoleApplicationController;
 use App\Http\Controllers\Api\VolunteerController;
 use App\Http\Controllers\Api\AdminDashboardController;
+use App\Http\Controllers\Api\AdminIncidentController;
 use App\Http\Controllers\Api\ResponseNetworkController;
 use App\Http\Middleware\AuthenticateJwt;
 use App\Http\Middleware\EnsureRole;
@@ -94,6 +95,13 @@ Route::middleware([AuthenticateJwt::class])->group(function (): void {
         Route::post('/reports/{id}/verify', [AdminReportController::class, 'verify']);
         Route::post('/reports/{id}/reject', [AdminReportController::class, 'reject']);
         Route::post('/reports/{id}/close', [AdminReportController::class, 'close']);
+
+        Route::get('/incidents', [AdminIncidentController::class, 'index']);
+        Route::post('/incidents', [AdminIncidentController::class, 'store']);
+        Route::get('/incidents/{id}', [AdminIncidentController::class, 'show']);
+        Route::put('/incidents/{id}', [AdminIncidentController::class, 'update']);
+        Route::patch('/incidents/{id}/status', [AdminIncidentController::class, 'updateStatus']);
+        Route::patch('/incidents/{id}/close', [AdminIncidentController::class, 'close']);
     });
 });
 Route::get('/map-data', [MapController::class, 'index']);
