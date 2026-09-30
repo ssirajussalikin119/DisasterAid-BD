@@ -23,7 +23,7 @@ class OtpService
             ]);
         }
 
-        if (RateLimiter::tooManyAttempts($dailyKey, 5)) {
+        if (RateLimiter::tooManyAttempts($dailyKey, 10)) {
             throw ValidationException::withMessages([
                 'phone' => ['The daily OTP request limit has been reached.'],
             ]);

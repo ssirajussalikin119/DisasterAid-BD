@@ -3,9 +3,11 @@ import AppLayout from '../layouts/AppLayout';
 import GuestRoute from '../middleware/GuestRoute';
 import ProtectedRoute from '../middleware/ProtectedRoute';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
+import AdminIncidentsPage from '../pages/AdminIncidentsPage';
 import AdminApplicationsPage from '../pages/AdminApplicationsPage';
 import AdminReportsPage from '../pages/AdminReportsPage';
 import AdminUsersPage from '../pages/AdminUsersPage';
+import AdminReliefRequestsPage from '../pages/AdminReliefRequestsPage';
 import AccountPage from '../pages/AccountPage';
 import ApplyNgoPage from '../pages/ApplyNgoPage';
 import ApplyVolunteerPage from '../pages/ApplyVolunteerPage';
@@ -114,6 +116,14 @@ export default function AppRouter() {
           }
         />
         <Route
+          path="/admin/incidents"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminIncidentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/users"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
@@ -134,6 +144,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/relief-requests"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminReliefRequestsPage />
             </ProtectedRoute>
           }
         />
