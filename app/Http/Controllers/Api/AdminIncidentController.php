@@ -9,6 +9,8 @@ use App\Services\AdminIncidentService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 class AdminIncidentController extends Controller
 {
@@ -94,5 +96,34 @@ class AdminIncidentController extends Controller
         }
 
         return $this->successResponse('Incident closed/resolved.', ['incident' => $incident]);
+    }
+
+    public function finalize(int $id): JsonResponse
+    {
+        try {
+            DB::statement('CALL finalize_incident(?, ?)', [$id, auth('api')->id() ?? 0]);
+            
+            // Re-fetch the updated incident to return
+            $incident = $this->adminIncidentService->getIncidentDetails($id);
+            
+            return $this->successResponse('Incident finalized successfully.', ['incident' => $incident]);
+        } catch (QueryException $e) {
+            $message = $e->getMessage();
+            $cleanMessage = 'Could not finalize incident due to a database error.';
+            
+            if (str_contains($message, 'has uncompleted assignments')) {
+                $cleanMessage = 'Cannot finalize: There are uncompleted assignments for this incident.';
+            } elseif (str_contains($message, 'is already resolved')) {
+                $cleanMessage = 'Cannot finalize: Incident is already resolved.';
+            } elseif (str_contains($message, 'does not exist')) {
+                $cleanMessage = 'Cannot finalize: Incident does not exist.';
+            }
+
+            return $this->errorResponse($cleanMessage, [], 422);
+        } catch (ModelNotFoundException) {
+            return $this->errorResponse('Incident not found.', [], 404);
+        } catch (\Exception $e) {
+            return $this->errorResponse('An error occurred during finalization.', [], 500);
+        }
     }
 }
