@@ -70,6 +70,48 @@ function ClickHandler({ onMapClick }) {
   return null;
 }
 
+function MapAutoResize() {
+  const map = useMap();
+  useEffect(() => {
+    let frame = 0;
+    let observer = null;
+
+    if (import.meta.env.DEV) {
+      const rect = map.getContainer()?.getBoundingClientRect();
+      // eslint-disable-next-line no-console
+      console.debug('[map] mount diagnostics', {
+        containerRect: rect && { width: rect.width, height: rect.height },
+        clientWidth: map.getContainer()?.clientWidth,
+        clientHeight: map.getContainer()?.clientHeight,
+        leafletSize: map.getSize(),
+      });
+    }
+
+    // Recalculate once the initial layout has settled. Leaflet measures the
+    // container at creation time, which can precede flex layout resolution.
+    frame = requestAnimationFrame(() => {
+      map.invalidateSize();
+    });
+
+    // Recalculate whenever the container size changes afterwards (sidebar
+    // toggles, responsive breakpoints, visibility changes). invalidateSize
+    // never resizes the container itself, so this cannot loop.
+    const container = map.getContainer();
+    if (container && typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(() => {
+        map.invalidateSize();
+      });
+      observer.observe(container);
+    }
+
+    return () => {
+      cancelAnimationFrame(frame);
+      if (observer) observer.disconnect();
+    };
+  }, [map]);
+  return null;
+}
+
 const toFinitePoint = (latitude, longitude) => {
   const lat = Number(latitude);
   const lng = Number(longitude);
@@ -630,6 +672,7 @@ export default function ReportLocationPicker({
             maxZoom={BASEMAPS.streets.maxZoom}
           />
           {flyTarget ? <MapFlyTo target={flyTarget} /> : null}
+          <MapAutoResize />
           {interactive ? <ClickHandler onMapClick={handleMapClick} /> : null}
           {districtFeatures.length > 0 ? (
             <GeoJSON key={districtKey} data={districtFeatures} style={districtStyle} />

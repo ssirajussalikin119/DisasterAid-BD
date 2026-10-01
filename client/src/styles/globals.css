@@ -29,7 +29,12 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Interactive incident map */
+/* Interactive incident map: isolate Leaflet imagery from the global
+   responsive-img rule above (max-width:100% would distort tiles/icons). */
+.leaflet-container img {
+  max-width: none;
+}
+
 .leaflet-container {
   background: #e0f2fe;
   font-family: inherit;
