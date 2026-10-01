@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\VolunteerController;
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminIncidentController;
 use App\Http\Controllers\Api\ResponseNetworkController;
+use App\Http\Controllers\Api\VolunteerAssignmentController;
 use App\Http\Middleware\AuthenticateJwt;
 use App\Http\Middleware\EnsureRole;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,10 @@ Route::middleware([AuthenticateJwt::class, 'role:admin,volunteer'])->group(funct
     Route::get('assignments/sql/except', [AssignmentController::class, 'exceptUnassigned']);
     Route::get('assignments/sql/aggregate', [AssignmentController::class, 'aggregateCounts']);
     Route::apiResource('assignments', AssignmentController::class);
+});
+Route::middleware([AuthenticateJwt::class, 'role:volunteer'])->prefix('volunteer')->group(function (): void {
+    Route::get('/assignments', [VolunteerAssignmentController::class, 'index']);
+    Route::patch('/assignments/{id}/status', [VolunteerAssignmentController::class, 'updateStatus']);
 });
 Route::middleware([AuthenticateJwt::class])->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
