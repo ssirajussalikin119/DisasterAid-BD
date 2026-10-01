@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import Container from '../components/common/Container';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -24,6 +25,7 @@ function niceDate(value) {
 }
 
 export default function ReliefManagementPage() {
+  const { user } = useAuth();
   const [centers, setCenters] = useState([]);
   const [distributions, setDistributions] = useState([]);
   const [centerForm, setCenterForm] = useState(emptyCenter);
@@ -145,8 +147,9 @@ export default function ReliefManagementPage() {
           <Container>
             {message ? <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">{message}</div> : null}
             {error ? <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</div> : null}
-            <div className="grid gap-8 xl:grid-cols-2">
-              <form onSubmit={submitCenter} className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+            {user?.role === 'admin' && (
+              <div className="grid gap-8 xl:grid-cols-2">
+                <form onSubmit={submitCenter} className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="font-display text-2xl font-bold">{editingCenterId ? 'Edit relief center' : 'Add relief center'}</h2>
                 <p className="mt-2 text-sm text-slate-600">Creates a row through POST /api/relief-centers.</p>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -178,7 +181,8 @@ export default function ReliefManagementPage() {
                 </div>
                 <PrimaryButton type="submit" className="mt-6" disabled={saving === 'distribution'}>{saving === 'distribution' ? 'Saving...' : 'Save distribution'}</PrimaryButton>
               </form>
-            </div>
+              </div>
+            )}
           </Container>
         </section>
 
@@ -252,7 +256,7 @@ export default function ReliefManagementPage() {
         <section className="bg-white py-12">
           <Container>
             <h2 className="font-display text-3xl font-bold">Relief centers</h2>
-            {loading ? <p className="mt-6 text-slate-600">Loading database records...</p> : <div className="mt-7 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{centers.map((center) => <article key={center.id} className="rounded-2xl border border-slate-200 p-5 shadow-sm"><div className="flex items-start justify-between gap-3"><h3 className="font-display text-xl font-bold">{center.name}</h3><span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase text-emerald-700">{center.status || 'active'}</span></div><p className="mt-3 text-sm text-slate-600">{center.address}</p><div className="mt-5 space-y-2 text-sm"><p><b>Capacity:</b> {center.capacity ?? '—'}</p><p><b>Contact:</b> {center.contact_number || '—'}</p><p><b>Resources:</b> {center.available_resources || 'Not recorded'}</p>{center.latitude != null && center.longitude != null ? <p><b>Coordinates:</b> {center.latitude}, {center.longitude}</p> : null}</div><div className="mt-5 flex gap-2 border-t border-slate-100 pt-4"><button type="button" onClick={() => editCenter(center)} className="rounded-full border border-slate-300 px-4 py-2 text-xs font-bold hover:bg-slate-50">Edit</button><button type="button" onClick={() => removeCenter(center)} className="rounded-full border border-red-200 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50">Delete</button></div></article>)}</div>}
+            {loading ? <p className="mt-6 text-slate-600">Loading database records...</p> : <div className="mt-7 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{centers.map((center) => <article key={center.id} className="rounded-2xl border border-slate-200 p-5 shadow-sm"><div className="flex items-start justify-between gap-3"><h3 className="font-display text-xl font-bold">{center.name}</h3><span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase text-emerald-700">{center.status || 'active'}</span></div><p className="mt-3 text-sm text-slate-600">{center.address}</p><div className="mt-5 space-y-2 text-sm"><p><b>Capacity:</b> {center.capacity ?? '—'}</p><p><b>Contact:</b> {center.contact_number || '—'}</p><p><b>Resources:</b> {center.available_resources || 'Not recorded'}</p>{center.latitude != null && center.longitude != null ? <p><b>Coordinates:</b> {center.latitude}, {center.longitude}</p> : null}</div>{user?.role === 'admin' && (<div className="mt-5 flex gap-2 border-t border-slate-100 pt-4"><button type="button" onClick={() => editCenter(center)} className="rounded-full border border-slate-300 px-4 py-2 text-xs font-bold hover:bg-slate-50">Edit</button><button type="button" onClick={() => removeCenter(center)} className="rounded-full border border-red-200 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50">Delete</button></div>)}</article>)}</div>}
           </Container>
         </section>
 
