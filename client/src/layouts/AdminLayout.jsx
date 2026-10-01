@@ -11,7 +11,7 @@ const navigation = [
   { label: 'Incidents', icon: 'incidents' },
   { label: 'Volunteers', icon: 'volunteers' },
   { label: 'Assignments', to: '/admin/assignments', icon: 'assignments' },
-  { label: 'Relief & Resources', icon: 'relief' },
+  { label: 'Relief & Resources', to: '/relief-management', icon: 'relief' },
   { label: 'Verification', icon: 'verification' },
   { label: 'Analytics', to: '/admin/analytics', icon: 'analytics' },
   { label: 'Audit Logs', icon: 'audit' },
