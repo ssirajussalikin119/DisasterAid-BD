@@ -86,7 +86,7 @@ export const normalizeIncident = (incident, index = 0) => {
   };
 };
 
-export async function getIncidents() {
+export async function getIncidents({ liveOnly = false } = {}) {
   try {
     const response = await api.get('/reports');
     const rows = extractRows(response.data);
@@ -94,13 +94,14 @@ export async function getIncidents() {
       return rows.map(normalizeIncident);
     }
   } catch {
-    // API network or offline: return seed incidents seamlessly
+    // API network or offline: fall through below
   }
+  if (liveOnly) return [];
   return incidentSeedData.map(normalizeIncident);
 }
 
 export async function getMapIncidents() {
-  const incidents = await getIncidents();
+  const incidents = await getIncidents({ liveOnly: true });
   return incidents.filter(
     (incident) =>
       incident.latitude !== null &&
@@ -108,6 +109,32 @@ export async function getMapIncidents() {
       Math.abs(incident.latitude) <= 90 &&
       Math.abs(incident.longitude) <= 180,
   );
+}
+
+export async function getReliefCenters() {
+  try {
+    const { data } = await api.get('/relief-centers');
+    const rows = extractRows(data);
+    return rows
+      .map((row, index) => ({
+        id: row.id ?? `relief-${index + 1}`,
+        name: row.name ?? 'Relief center',
+        address: row.address ?? '',
+        capacity: row.capacity ?? null,
+        status: row.status ?? 'active',
+        latitude: normalizeCoordinate(row.latitude ?? row.lat),
+        longitude: normalizeCoordinate(row.longitude ?? row.lng ?? row.lon),
+      }))
+      .filter(
+        (center) =>
+          center.latitude !== null &&
+          center.longitude !== null &&
+          Math.abs(center.latitude) <= 90 &&
+          Math.abs(center.longitude) <= 180,
+      );
+  } catch {
+    return [];
+  }
 }
 
 export async function createReport(payload) {
@@ -146,34 +173,9 @@ export async function getMapData(filters = {}) {
       return data.data;
     }
   } catch {
-    // Network or empty response fallback
+    // Network or empty response: fall through to an honest empty result.
+    // Seed data must never be presented as live production data.
   }
 
-  // Dynamic fallback from seed data
-  const fallbackMarkers = incidentSeedData.map((inc) => ({
-    id: inc.id,
-    title: inc.title,
-    description: inc.description,
-    location: inc.location,
-    latitude: inc.latitude,
-    longitude: inc.longitude,
-    severity: inc.severity.toLowerCase(),
-    status: inc.status.toLowerCase(),
-    verification_status: inc.status.toLowerCase() === 'verified' ? 'verified' : 'pending',
-    district: inc.location.split(',').pop()?.trim() || 'Other',
-    created_at: inc.reportedAt,
-  }));
-
-  return {
-    districts: [
-      { name: 'Sylhet', severity: 'critical', incident_count: 2, verified_report_count: 2 },
-      { name: 'Kurigram', severity: 'high', incident_count: 1, verified_report_count: 1 },
-      { name: 'Chattogram', severity: 'high', incident_count: 1, verified_report_count: 1 },
-      { name: 'Patuakhali', severity: 'medium', incident_count: 1, verified_report_count: 1 },
-      { name: 'Rangamati', severity: 'critical', incident_count: 1, verified_report_count: 0 },
-      { name: 'Satkhira', severity: 'critical', incident_count: 1, verified_report_count: 1 },
-      { name: 'Dhaka', severity: 'low', incident_count: 1, verified_report_count: 1 },
-    ],
-    markers: fallbackMarkers,
-  };
+  return { districts: [], markers: [] };
 }

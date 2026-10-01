@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Field from '../components/Field';
 import PrimaryButton from '../components/PrimaryButton';
+import MyAssignments from '../components/volunteer/MyAssignments';
 import { useAuth } from '../hooks/useAuth';
 
 function getInitials(name) {
@@ -276,6 +277,8 @@ export default function AccountPage() {
           </section>
         </div>
       </div>
+
+      {user?.role === 'volunteer' ? <MyAssignments /> : null}
 
       <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-panel sm:p-10">
         <div className="flex items-center gap-3">

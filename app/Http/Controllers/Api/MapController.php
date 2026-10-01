@@ -19,7 +19,10 @@ class MapController extends Controller
     {
         $validated = $request->validate([
             'severity' => ['nullable', 'string', 'in:low,medium,high,critical'],
-            'status' => ['nullable', 'string', 'in:active,monitoring,resolved'],
+            // active/monitoring/resolved are incident-level statuses;
+            // pending/verified are report-level statuses. Both are accepted
+            // (additive only) so the existing map filters never 422.
+            'status' => ['nullable', 'string', 'in:active,monitoring,resolved,pending,verified'],
         ]);
 
         $data = $this->mapService->getMapData(

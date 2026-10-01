@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Logo from '../components/layout/Logo';
-import IncidentMap from '../components/map/IncidentMap';
+import ReportLocationPicker from '../components/map/ReportLocationPicker';
 import MapSidebar from '../components/map/MapSidebar';
 import { getMapIncidents } from '../services/incidentService';
 
@@ -213,10 +213,17 @@ export default function MapPage() {
             </button>
           ) : null}
 
-          <IncidentMap
-            incidents={filteredIncidents}
-            focusedIncident={focusedIncident}
-            onMarkerClick={handleMarkerClick}
+          <ReportLocationPicker
+            showControls={false}
+            interactive={false}
+            fillHeight
+            mapClassName="h-full w-full"
+            externalFocus={
+              focusedIncident
+                ? { center: [focusedIncident.latitude, focusedIncident.longitude], zoom: 12 }
+                : null
+            }
+            onExistingMarkerClick={handleMarkerClick}
           />
 
           <div

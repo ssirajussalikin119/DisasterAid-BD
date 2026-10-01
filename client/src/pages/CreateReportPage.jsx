@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import Container from '../components/common/Container';
 import FormField from '../components/ui/FormField';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -14,6 +14,8 @@ const initialForm = {
   title: '',
   description: '',
   location: '',
+  district_code: '',
+  upazila_code: '',
   latitude: '',
   longitude: '',
   severity: 'medium',
@@ -22,12 +24,22 @@ const initialForm = {
 
 export default function CreateReportPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { isAuthenticated, bootstrapping } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [incidents, setIncidents] = useState([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+
+  // Prefill from the public map "Report an incident here" button
+  // (?district_code=…&upazila_code=…) or router state.
+  const prefillDistrictCode =
+    searchParams.get('district_code') || location.state?.district_code || '';
+  const prefillUpazilaCode =
+    searchParams.get('upazila_code') || location.state?.upazila_code || '';
 
   useEffect(() => {
     getOfficialIncidents()
@@ -37,10 +49,12 @@ export default function CreateReportPage() {
 
   const updateField = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
 
-  const handleLocationSelection = ({ location, latitude, longitude }) => {
+  const handleLocationSelection = ({ location, latitude, longitude, district_code, upazila_code }) => {
     setForm((current) => ({
       ...current,
       location: location || current.location,
+      district_code: district_code ?? current.district_code,
+      upazila_code: upazila_code ?? current.upazila_code,
       latitude: latitude !== '' && latitude != null ? String(latitude) : '',
       longitude: longitude !== '' && longitude != null ? String(longitude) : '',
     }));
@@ -61,6 +75,8 @@ export default function CreateReportPage() {
         title: form.title,
         description: form.description,
         location: form.location,
+        district_code: form.district_code || null,
+        upazila_code: form.upazila_code || null,
         latitude: form.latitude ? Number(form.latitude) : null,
         longitude: form.longitude ? Number(form.longitude) : null,
         severity: form.severity,
@@ -106,7 +122,7 @@ export default function CreateReportPage() {
                   </Link>
                   <button
                     type="button"
-                    onClick={() => { setSubmitted(false); setForm(initialForm); setError(''); }}
+                    onClick={() => { setSubmitted(false); setForm(initialForm); setError(''); setFormKey((k) => k + 1); }}
                     className="inline-flex items-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-ink transition hover:bg-slate-50"
                   >
                     Submit Another
@@ -136,9 +152,12 @@ export default function CreateReportPage() {
               <FormField label="Title" value={form.title} onChange={updateField('title')} placeholder="Flooding near the market" required />
 
               <ReportLocationPicker
+                key={formKey}
                 latitude={form.latitude}
                 longitude={form.longitude}
                 location={form.location}
+                initialDistrictCode={formKey === 0 ? prefillDistrictCode : ''}
+                initialUpazilaCode={formKey === 0 ? prefillUpazilaCode : ''}
                 onSelectionChange={handleLocationSelection}
               />
 

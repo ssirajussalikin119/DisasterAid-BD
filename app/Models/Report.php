@@ -15,6 +15,8 @@ class Report extends Model
         'title',
         'description',
         'location',
+        'district_code',
+        'upazila_code',
         'latitude',
         'longitude',
         'status',

@@ -3,10 +3,8 @@ export const navLinks = [
   { label: 'Disasters', href: '/incidents' },
   { label: 'Report Matrix', href: '/report-incident-relations' },
   { label: 'Map', href: '/map' },
-  { label: 'Volunteer', href: '/#get-involved' },
   { label: 'Relief', href: '/relief-management' },
   { label: 'News', href: '/#news-featured-stories' },
-  { label: 'About', href: '/#who-we-are' },
   { label: 'Response Network', href: '/response-network' },
 ];
 

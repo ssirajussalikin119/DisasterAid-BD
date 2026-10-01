@@ -3,6 +3,7 @@ import { districtList } from '../data/bangladeshDistricts';
 // Known Bangladesh Localities for instant offline search fallback
 const LOCAL_BANGLADESH_PLACES = [
   { name: 'Khilgaon', displayName: 'Khilgaon, Dhaka', districtName: 'Dhaka', latitude: 23.7516, longitude: 90.4244, type: 'locality' },
+  { name: 'Motijheel', displayName: 'Motijheel, Dhaka', districtName: 'Dhaka', latitude: 23.7333, longitude: 90.4175, type: 'locality' },
   { name: 'Mirpur', displayName: 'Mirpur, Dhaka', districtName: 'Dhaka', latitude: 23.8067, longitude: 90.3687, type: 'locality' },
   { name: 'Rajbag', displayName: 'Rajbag, Dhaka', districtName: 'Dhaka', latitude: 23.7380, longitude: 90.4190, type: 'locality' },
   { name: 'Raypur', displayName: 'Raypur, Lakshmipur', districtName: 'Lakshmipur', latitude: 23.0375, longitude: 90.7681, type: 'upazila' },
@@ -11,6 +12,14 @@ const LOCAL_BANGLADESH_PLACES = [
   { name: 'Gulshan', displayName: 'Gulshan, Dhaka', districtName: 'Dhaka', latitude: 23.7925, longitude: 90.4078, type: 'locality' },
   { name: 'Uttara', displayName: 'Uttara, Dhaka', districtName: 'Dhaka', latitude: 23.8759, longitude: 90.3795, type: 'locality' },
   { name: 'Mohakhali', displayName: 'Mohakhali, Dhaka', districtName: 'Dhaka', latitude: 23.7778, longitude: 90.4055, type: 'locality' },
+  { name: 'Banani', displayName: 'Banani, Dhaka', districtName: 'Dhaka', latitude: 23.7937, longitude: 90.4066, type: 'locality' },
+  { name: 'Mohammadpur', displayName: 'Mohammadpur, Dhaka', districtName: 'Dhaka', latitude: 23.7639, longitude: 90.3589, type: 'locality' },
+  { name: 'Tejgaon', displayName: 'Tejgaon, Dhaka', districtName: 'Dhaka', latitude: 23.7615, longitude: 90.3890, type: 'locality' },
+  { name: 'Farmgate', displayName: 'Farmgate, Dhaka', districtName: 'Dhaka', latitude: 23.7562, longitude: 90.3890, type: 'locality' },
+  { name: 'Badda', displayName: 'Badda, Dhaka', districtName: 'Dhaka', latitude: 23.7808, longitude: 90.4253, type: 'locality' },
+  { name: 'Jatrabari', displayName: 'Jatrabari, Dhaka', districtName: 'Dhaka', latitude: 23.7087, longitude: 90.4352, type: 'locality' },
+  { name: 'Sadarghat', displayName: 'Sadarghat, Dhaka', districtName: 'Dhaka', latitude: 23.7085, longitude: 90.4075, type: 'locality' },
+  { name: 'Shyamoli', displayName: 'Shyamoli, Dhaka', districtName: 'Dhaka', latitude: 23.7731, longitude: 90.3590, type: 'locality' },
   { name: 'Sylhet Sadar', displayName: 'Sylhet Sadar, Sylhet', districtName: 'Sylhet', latitude: 24.8949, longitude: 91.8687, type: 'upazila' },
   { name: 'Chilmari', displayName: 'Chilmari, Kurigram', districtName: 'Kurigram', latitude: 25.5568, longitude: 89.6714, type: 'upazila' },
   { name: 'Kotwali', displayName: 'Kotwali, Chattogram', districtName: 'Chattogram', latitude: 22.3569, longitude: 91.7832, type: 'locality' },
@@ -23,11 +32,23 @@ const LOCAL_BANGLADESH_PLACES = [
   { name: 'Fulchhari', displayName: 'Fulchhari, Gaibandha', districtName: 'Gaibandha', latitude: 25.1754, longitude: 89.6532, type: 'upazila' }
 ];
 
+const searchCache = new Map();
+const MAX_CACHE_ENTRIES = 60;
+
+export function clearLocationSearchCache() {
+  searchCache.clear();
+}
+
 export async function searchLocations(query) {
   const trimmed = String(query ?? '').trim();
   if (!trimmed) return [];
 
-  const lower = trimmed.toLowerCase();
+  const cacheKey = trimmed.toLowerCase();
+  if (searchCache.has(cacheKey)) {
+    return searchCache.get(cacheKey);
+  }
+
+  const lower = cacheKey;
   const results = [];
 
   // 1. Search local 64 Districts (which have real polygons)
@@ -118,5 +139,11 @@ export async function searchLocations(query) {
     // Network or timeout: return local results seamlessly
   }
 
-  return results.slice(0, 8);
+  const sliced = results.slice(0, 8);
+  searchCache.set(cacheKey, sliced);
+  if (searchCache.size > MAX_CACHE_ENTRIES) {
+    const oldest = searchCache.keys().next();
+    if (!oldest.done) searchCache.delete(oldest.value);
+  }
+  return sliced;
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Rules\ValidAreaCode;
 use App\Services\ReportService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -75,6 +76,8 @@ class ReportController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'location' => 'required|string|max:255',
+            'district_code' => ['nullable', 'string', 'max:64', new ValidAreaCode('districts')],
+            'upazila_code' => ['nullable', 'string', 'max:64', new ValidAreaCode('upazilas')],
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'incident_id' => 'nullable|integer|exists:incidents,id',

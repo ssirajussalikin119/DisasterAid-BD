@@ -7,6 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // PostgreSQL-only object: skip on other drivers (e.g. sqlite in tests).
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
         DB::unprepared("
             CREATE OR REPLACE PROCEDURE finalize_incident(
                 p_incident_id BIGINT,
@@ -55,6 +60,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
         DB::unprepared("DROP PROCEDURE IF EXISTS finalize_incident(BIGINT, BIGINT);");
     }
 };
