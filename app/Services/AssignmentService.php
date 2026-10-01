@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\Assignment;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class AssignmentService
 {
@@ -28,6 +29,13 @@ class AssignmentService
 
     public function update(int $id, array $data): Assignment
     {
+        // Boolean literals (not PHP bools): the Postgres connection used
+        // here rejects integer-bound booleans (SQLSTATE 42804), while
+        // TRUE/FALSE literals work on both Postgres and SQLite.
+        if (array_key_exists('accepted', $data) && ! $data['accepted'] instanceof \Illuminate\Database\Query\Expression) {
+            $data['accepted'] = DB::raw(filter_var($data['accepted'], FILTER_VALIDATE_BOOLEAN) ? 'TRUE' : 'FALSE');
+        }
+
         $assignment = Assignment::findOrFail($id);
         $assignment->update($data);
 
