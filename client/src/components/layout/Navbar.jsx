@@ -38,7 +38,7 @@ export default function Navbar() {
             </PrimaryButton>
             {!bootstrapping && user ? (
               <>
-                <Link to="/account" className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-ink">{user.name}</Link>
+                <Link to={user.role === 'admin' ? '/admin/dashboard' : '/account'} className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-ink">{user.name}</Link>
                 <button type="button" onClick={handleLogout} className="whitespace-nowrap text-sm font-semibold text-slate-700 transition hover:text-ink">Logout</button>
               </>
             ) : !bootstrapping ? (
