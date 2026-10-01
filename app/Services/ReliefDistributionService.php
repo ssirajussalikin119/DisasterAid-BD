@@ -19,7 +19,23 @@ class ReliefDistributionService
 
     public function create(array $data)
     {
-        return ReliefDistribution::create($data);
+        return DB::transaction(function () use ($data) {
+            // Fetch the center
+            $center = \App\Models\ReliefCenter::findOrFail($data['relief_center_id']);
+            
+            // Validate capacity if it's not null
+            if ($center->capacity !== null) {
+                if ($center->capacity < $data['quantity']) {
+                    throw new \InvalidArgumentException("Insufficient capacity. The relief center only has {$center->capacity} units available.");
+                }
+                
+                // Decrement capacity
+                $center->decrement('capacity', $data['quantity']);
+            }
+
+            // Create distribution
+            return ReliefDistribution::create($data);
+        });
     }
 
     public function update($id, array $data)

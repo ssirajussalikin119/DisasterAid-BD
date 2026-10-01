@@ -129,7 +129,7 @@ Route::get('/relief-statistics', [ReliefDistributionController::class, 'statisti
 Route::apiResource('relief-centers', ReliefCenterController::class)->only(['index', 'show']);
 Route::apiResource('relief-distributions', ReliefDistributionController::class)->only(['index', 'show']);
 
-Route::middleware([AuthenticateJwt::class])->group(function (): void {
+Route::middleware([AuthenticateJwt::class, 'role:admin'])->group(function (): void {
     Route::apiResource('relief-centers', ReliefCenterController::class)->except(['index', 'show']);
     Route::apiResource('relief-distributions', ReliefDistributionController::class)->except(['index', 'show']);
 });

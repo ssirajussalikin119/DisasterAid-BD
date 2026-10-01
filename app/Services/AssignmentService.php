@@ -19,7 +19,15 @@ class AssignmentService
     {
         $data['assigned_by'] = auth('api')->id();
 
-        return Assignment::create($data)->load(['volunteer.user', 'incident', 'assigner']);
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+            $assignment = Assignment::create($data);
+            
+            // Update volunteer status to 'busy' within the same transaction
+            $volunteer = \App\Models\Volunteer::findOrFail($data['volunteer_id']);
+            $volunteer->update(['availability' => 'busy']);
+
+            return $assignment->load(['volunteer.user', 'incident', 'assigner']);
+        });
     }
 
     public function getById(int $id): Assignment
