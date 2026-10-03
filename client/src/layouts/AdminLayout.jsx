@@ -9,12 +9,9 @@ const navigation = [
   { label: 'Applications', to: '/admin/applications', icon: 'applications' },
   { label: 'Reports', to: '/admin/reports', icon: 'reports' },
   { label: 'Incidents', to: '/admin/incidents', icon: 'incidents' },
-  { label: 'Volunteers', icon: 'volunteers' },
   { label: 'Assignments', to: '/admin/assignments', icon: 'assignments' },
   { label: 'Relief & Resources', to: '/relief-management', icon: 'relief' },
-  { label: 'Verification', icon: 'verification' },
   { label: 'Analytics', to: '/admin/analytics', icon: 'analytics' },
-  { label: 'Audit Logs', icon: 'audit' },
 ];
 
 function NavIcon({ type }) {
