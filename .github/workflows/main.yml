@@ -1,0 +1,84 @@
+name: CI/CD - Deploy DisasterAid BD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build and Deploy to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Verify project files
+        run: |
+          test -f Dockerfile
+          test -f docker-compose.yml
+          test -f routes/api.php
+          echo "Project files verified"
+
+      - name: Setup SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync project to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          rsync -az \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='node_modules/' \
+            --exclude='client/node_modules/' \
+            --exclude='client/dist/' \
+            --exclude='vendor/' \
+            --exclude='storage/logs/*' \
+            ./ "$VPS_USER@$VPS_HOST:~/disasteraid/"
+
+      - name: Build and restart application
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          ssh "$VPS_USER@$VPS_HOST" \
+            "cd ~/disasteraid && \
+             grep -v '^APP_COMMIT_SHA=' .env > .env.tmp && \
+             printf 'APP_COMMIT_SHA=%s\n' '$COMMIT_SHA' >> .env.tmp && \
+             mv .env.tmp .env && \
+             chmod 600 .env && \
+             sudo docker compose build && \
+             sudo docker compose up -d && \
+             sudo docker compose exec -T app php artisan config:clear"
+
+      - name: Verify deployment
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          RESPONSE=$(ssh "$VPS_USER@$VPS_HOST" \
+            "curl -fsS http://127.0.0.1:8000/api/health")
+
+          echo "$RESPONSE"
+
+          echo "$RESPONSE" | grep -q "\"status\":\"ok\""
+          echo "$RESPONSE" | grep -q "\"commit\":\"$COMMIT_SHA\""
+
+          echo "Deployment verified successfully"
