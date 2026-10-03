@@ -23,6 +23,13 @@ use App\Http\Middleware\AuthenticateJwt;
 use App\Http\Middleware\EnsureRole;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', function (): \Illuminate\Http\JsonResponse {
+    return response()->json([
+        'status' => 'ok',
+        'commit' => env('APP_COMMIT_SHA', 'unknown'),
+    ]);
+});
+
 Route::prefix('auth')->group(function (): void {
     Route::post('/send-otp', [OtpAuthController::class, 'sendOtp'])->middleware('throttle:otp-send');
     Route::post('/verify-otp', [OtpAuthController::class, 'verifyOtp'])->middleware('throttle:otp-verify');
